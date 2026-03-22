@@ -61,6 +61,16 @@ const MODELS: CompactModelDef[] = [
     modality: ModelCategory.Multimodal,
     memoryRequirement: 500_000_000,
   },
+  // VLM - Meta Pose2D
+  {
+    id: 'meta-pose2d',
+    name: 'Meta Pose2D',
+    repo: 'facebook/sapiens-pose-0.3b-GGUF',
+    files: ['sapiens_0.3b_goliath_best_goliath_AP_573.pth'],
+    framework: LLMFramework.LlamaCpp,
+    modality: ModelCategory.Multimodal,
+    memoryRequirement: 500_000_000,
+  },
   // STT (sherpa-onnx archive)
   {
     id: 'sherpa-onnx-whisper-tiny.en',
