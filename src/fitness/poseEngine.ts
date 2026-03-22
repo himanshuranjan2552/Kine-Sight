@@ -6,6 +6,8 @@
  * - Joint angle calculation from 3 keypoints
  * - Exercise-specific position detection via angle thresholds
  * - Skeleton drawing helpers
+ * - Visibility / confidence helpers
+ * - Hysteresis thresholds for stable rep counting
  */
 
 import {
@@ -46,6 +48,8 @@ export interface PoseAnalysis {
   angle: number;           // primary angle used for detection
   landmarks: NormalizedLandmark[];
   feedback: string;
+  /** Whether the key landmarks are visible enough for reliable analysis */
+  confident: boolean;
 }
 
 export interface ExerciseDef {
@@ -53,8 +57,27 @@ export interface ExerciseDef {
   name: string;
   icon: string;
   tips: string[];
+  /** Whether this exercise is a static hold (like plank) */
+  isHold?: boolean;
   /** Returns analysis for the given landmarks */
   analyze: (lm: NormalizedLandmark[]) => PoseAnalysis;
+  /** Which landmark indices are critical for this exercise */
+  keyLandmarks: number[];
+}
+
+// ---------------------------------------------------------------------------
+// Visibility helpers
+// ---------------------------------------------------------------------------
+const MIN_VISIBILITY = 0.5;
+
+/** Check if all the specified landmarks have sufficient visibility */
+export function areLandmarksVisible(
+  lm: NormalizedLandmark[],
+  indices: number[],
+): boolean {
+  return indices.every(
+    i => lm[i] && (lm[i].visibility ?? 0) >= MIN_VISIBILITY,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -84,7 +107,7 @@ function avgSideAngle(
 }
 
 // ---------------------------------------------------------------------------
-// Exercise definitions with angle-based analysis
+// Exercise definitions with angle-based analysis + hysteresis thresholds
 // ---------------------------------------------------------------------------
 export const EXERCISES: ExerciseDef[] = [
   {
@@ -92,24 +115,25 @@ export const EXERCISES: ExerciseDef[] = [
     name: 'Squats',
     icon: '🏋️',
     tips: ['Keep back straight', 'Knees behind toes', 'Thighs parallel to ground'],
-    analyze(lm) {
-      // Primary: knee angle (hip → knee → ankle)
+    keyLandmarks: [LM.LEFT_HIP, LM.RIGHT_HIP, LM.LEFT_KNEE, LM.RIGHT_KNEE, LM.LEFT_ANKLE, LM.RIGHT_ANKLE],
+    analyze(lm: NormalizedLandmark[]) {
+      const confident = areLandmarksVisible(lm, this.keyLandmarks);
       const kneeAngle = avgSideAngle(
         lm,
         LM.LEFT_HIP, LM.LEFT_KNEE, LM.LEFT_ANKLE,
         LM.RIGHT_HIP, LM.RIGHT_KNEE, LM.RIGHT_ANKLE,
       );
 
-      // Form: hip angle (shoulder → hip → knee) — check for leaning too far forward
       const hipAngle = avgSideAngle(
         lm,
         LM.LEFT_SHOULDER, LM.LEFT_HIP, LM.LEFT_KNEE,
         LM.RIGHT_SHOULDER, LM.RIGHT_HIP, LM.RIGHT_KNEE,
       );
 
+      // Hysteresis: enter down at <90, exit down at >110; enter up at >160, exit up at <145
       let position: ExercisePosition = 'middle';
-      if (kneeAngle < 100) position = 'down';
-      else if (kneeAngle > 155) position = 'up';
+      if (kneeAngle < 90) position = 'down';
+      else if (kneeAngle > 160) position = 'up';
 
       const form: FormQuality = hipAngle > 60 ? 'good' : 'bad';
       const feedback = position === 'down'
@@ -118,7 +142,7 @@ export const EXERCISES: ExerciseDef[] = [
           ? '⬆️ Stand tall!'
           : '🔄 Keep going...';
 
-      return { position, form, angle: Math.round(kneeAngle), landmarks: lm, feedback };
+      return { position, form, angle: Math.round(kneeAngle), landmarks: lm, feedback, confident };
     },
   },
   {
@@ -126,8 +150,9 @@ export const EXERCISES: ExerciseDef[] = [
     name: 'Bicep Curls',
     icon: '💪',
     tips: ['Keep elbows close to body', 'Full range of motion', 'Control the movement'],
-    analyze(lm) {
-      // Primary: elbow angle (shoulder → elbow → wrist)
+    keyLandmarks: [LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, LM.LEFT_ELBOW, LM.RIGHT_ELBOW, LM.LEFT_WRIST, LM.RIGHT_WRIST],
+    analyze(lm: NormalizedLandmark[]) {
+      const confident = areLandmarksVisible(lm, this.keyLandmarks);
       const elbowAngle = avgSideAngle(
         lm,
         LM.LEFT_SHOULDER, LM.LEFT_ELBOW, LM.LEFT_WRIST,
@@ -135,10 +160,9 @@ export const EXERCISES: ExerciseDef[] = [
       );
 
       let position: ExercisePosition = 'middle';
-      if (elbowAngle < 60) position = 'up'; // curled
-      else if (elbowAngle > 140) position = 'down'; // extended
+      if (elbowAngle < 50) position = 'up';      // curled (tighter threshold)
+      else if (elbowAngle > 150) position = 'down'; // extended (tighter threshold)
 
-      // Form: check if elbows stay near body (elbow x close to hip x)
       const elbowDrift = Math.abs(lm[LM.LEFT_ELBOW].x - lm[LM.LEFT_HIP].x);
       const form: FormQuality = elbowDrift < 0.15 ? 'good' : 'bad';
       const feedback = position === 'up'
@@ -147,7 +171,7 @@ export const EXERCISES: ExerciseDef[] = [
           ? '⬇️ Fully extend arms'
           : '🔄 Control the movement...';
 
-      return { position, form, angle: Math.round(elbowAngle), landmarks: lm, feedback };
+      return { position, form, angle: Math.round(elbowAngle), landmarks: lm, feedback, confident };
     },
   },
   {
@@ -155,8 +179,9 @@ export const EXERCISES: ExerciseDef[] = [
     name: 'Push-ups',
     icon: '🫸',
     tips: ['Keep body straight', 'Chest near ground', 'Full arm extension'],
-    analyze(lm) {
-      // Primary: elbow angle
+    keyLandmarks: [LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, LM.LEFT_ELBOW, LM.RIGHT_ELBOW, LM.LEFT_WRIST, LM.RIGHT_WRIST],
+    analyze(lm: NormalizedLandmark[]) {
+      const confident = areLandmarksVisible(lm, this.keyLandmarks);
       const elbowAngle = avgSideAngle(
         lm,
         LM.LEFT_SHOULDER, LM.LEFT_ELBOW, LM.LEFT_WRIST,
@@ -164,10 +189,9 @@ export const EXERCISES: ExerciseDef[] = [
       );
 
       let position: ExercisePosition = 'middle';
-      if (elbowAngle < 90) position = 'down';
-      else if (elbowAngle > 150) position = 'up';
+      if (elbowAngle < 80) position = 'down';
+      else if (elbowAngle > 155) position = 'up';
 
-      // Form: body alignment (shoulder → hip → ankle angle should be ~180)
       const bodyAngle = avgSideAngle(
         lm,
         LM.LEFT_SHOULDER, LM.LEFT_HIP, LM.LEFT_ANKLE,
@@ -180,7 +204,7 @@ export const EXERCISES: ExerciseDef[] = [
           ? '⬆️ Arms extended!'
           : '🔄 Push through...';
 
-      return { position, form, angle: Math.round(elbowAngle), landmarks: lm, feedback };
+      return { position, form, angle: Math.round(elbowAngle), landmarks: lm, feedback, confident };
     },
   },
   {
@@ -188,17 +212,17 @@ export const EXERCISES: ExerciseDef[] = [
     name: 'Lunges',
     icon: '🦵',
     tips: ['Front knee at 90°', 'Back knee near floor', 'Keep torso upright'],
-    analyze(lm) {
-      // Use the minimum knee angle (the front leg will have the smaller angle)
+    keyLandmarks: [LM.LEFT_HIP, LM.RIGHT_HIP, LM.LEFT_KNEE, LM.RIGHT_KNEE, LM.LEFT_ANKLE, LM.RIGHT_ANKLE],
+    analyze(lm: NormalizedLandmark[]) {
+      const confident = areLandmarksVisible(lm, this.keyLandmarks);
       const leftKnee = calcAngle(lm[LM.LEFT_HIP], lm[LM.LEFT_KNEE], lm[LM.LEFT_ANKLE]);
       const rightKnee = calcAngle(lm[LM.RIGHT_HIP], lm[LM.RIGHT_KNEE], lm[LM.RIGHT_ANKLE]);
       const minKnee = Math.min(leftKnee, rightKnee);
 
       let position: ExercisePosition = 'middle';
-      if (minKnee < 100) position = 'down';
-      else if (minKnee > 155) position = 'up';
+      if (minKnee < 95) position = 'down';
+      else if (minKnee > 160) position = 'up';
 
-      // Form: torso should be upright (shoulder-hip vertical alignment)
       const torsoLean = Math.abs(lm[LM.LEFT_SHOULDER].x - lm[LM.LEFT_HIP].x);
       const form: FormQuality = torsoLean < 0.1 ? 'good' : 'bad';
       const feedback = position === 'down'
@@ -207,7 +231,7 @@ export const EXERCISES: ExerciseDef[] = [
           ? '⬆️ Stand tall!'
           : '🔄 Lunge deeper...';
 
-      return { position, form, angle: Math.round(minKnee), landmarks: lm, feedback };
+      return { position, form, angle: Math.round(minKnee), landmarks: lm, feedback, confident };
     },
   },
   {
@@ -215,8 +239,9 @@ export const EXERCISES: ExerciseDef[] = [
     name: 'Shoulder Press',
     icon: '🙆',
     tips: ['Press directly overhead', 'Don\'t arch back', 'Full extension at top'],
-    analyze(lm) {
-      // Primary: elbow angle
+    keyLandmarks: [LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, LM.LEFT_ELBOW, LM.RIGHT_ELBOW, LM.LEFT_WRIST, LM.RIGHT_WRIST],
+    analyze(lm: NormalizedLandmark[]) {
+      const confident = areLandmarksVisible(lm, this.keyLandmarks);
       const elbowAngle = avgSideAngle(
         lm,
         LM.LEFT_SHOULDER, LM.LEFT_ELBOW, LM.LEFT_WRIST,
@@ -224,10 +249,9 @@ export const EXERCISES: ExerciseDef[] = [
       );
 
       let position: ExercisePosition = 'middle';
-      if (elbowAngle > 155) position = 'up'; // overhead
-      else if (elbowAngle < 100) position = 'down'; // at shoulders
+      if (elbowAngle > 160) position = 'up';
+      else if (elbowAngle < 95) position = 'down';
 
-      // Form: wrists should be roughly above shoulders (not too far out)
       const wristOffset = Math.abs(
         (lm[LM.LEFT_WRIST].x + lm[LM.RIGHT_WRIST].x) / 2 -
         (lm[LM.LEFT_SHOULDER].x + lm[LM.RIGHT_SHOULDER].x) / 2
@@ -239,16 +263,18 @@ export const EXERCISES: ExerciseDef[] = [
           ? '⬇️ Ready position'
           : '🔄 Press up...';
 
-      return { position, form, angle: Math.round(elbowAngle), landmarks: lm, feedback };
+      return { position, form, angle: Math.round(elbowAngle), landmarks: lm, feedback, confident };
     },
   },
   {
     id: 'plank',
     name: 'Plank',
     icon: '🧘',
+    isHold: true,
     tips: ['Keep body in straight line', 'Engage core', 'Don\'t drop hips'],
-    analyze(lm) {
-      // Body alignment: shoulder → hip → ankle angle
+    keyLandmarks: [LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, LM.LEFT_HIP, LM.RIGHT_HIP, LM.LEFT_ANKLE, LM.RIGHT_ANKLE],
+    analyze(lm: NormalizedLandmark[]) {
+      const confident = areLandmarksVisible(lm, this.keyLandmarks);
       const bodyAngle = avgSideAngle(
         lm,
         LM.LEFT_SHOULDER, LM.LEFT_HIP, LM.LEFT_ANKLE,
@@ -261,7 +287,7 @@ export const EXERCISES: ExerciseDef[] = [
         ? '🧘 Great plank! Body is straight!'
         : '⚠️ Keep hips up — straighten your body!';
 
-      return { position, form, angle: Math.round(bodyAngle), landmarks: lm, feedback };
+      return { position, form, angle: Math.round(bodyAngle), landmarks: lm, feedback, confident };
     },
   },
 ];

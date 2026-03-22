@@ -1,0 +1,3 @@
+src/components/FitnessTab.tsx(196,49): error TS7006: Parameter 'lm' implicitly has an 'any' type.
+src/fitness/poseEngine.ts(17,8): error TS2307: Cannot find module '@mediapipe/tasks-vision' or its corresponding type declarations.
+src/fitness/poseEngine.ts(18,41): error TS2307: Cannot find module '@mediapipe/tasks-vision' or its corresponding type declarations.

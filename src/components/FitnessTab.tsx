@@ -6,12 +6,17 @@ import {
   drawAngleBadge,
   LM,
 } from '../fitness/poseEngine';
-import type { ExerciseDef, PoseAnalysis, FormQuality } from '../fitness/poseEngine';
+import type { ExerciseDef, PoseAnalysis, FormQuality, ExercisePosition } from '../fitness/poseEngine';
+import type { NormalizedLandmark } from '@mediapipe/tasks-vision';
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 const CANVAS_FPS = 30;
+/** Number of consecutive frames required to confirm a position change */
+const DEBOUNCE_FRAMES = 5;
+/** Countdown duration in seconds before workout starts */
+const COUNTDOWN_SECONDS = 5;
 
 // ---------------------------------------------------------------------------
 // Types
@@ -40,6 +45,9 @@ export function FitnessTab() {
   const [poseReady, setPoseReady] = useState(false);
   const [poseLoading, setPoseLoading] = useState(false);
 
+  // Countdown
+  const [countdown, setCountdown] = useState<number | null>(null);
+
   // Session
   const [isWorkout, setIsWorkout] = useState(false);
   const [phase, setPhase] = useState<RepPhase>('idle');
@@ -54,6 +62,10 @@ export function FitnessTab() {
   });
   const [elapsed, setElapsed] = useState(0);
 
+  // Plank-specific
+  const [plankHoldTime, setPlankHoldTime] = useState(0);
+  const [plankBestTime, setPlankBestTime] = useState(0);
+
   // Refs
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -67,27 +79,19 @@ export function FitnessTab() {
   const lastTimeRef = useRef<number>(0);
   const exerciseRef = useRef<ExerciseDef | null>(null);
 
+  // Debounce refs — for stable position detection
+  const pendingPositionRef = useRef<ExercisePosition>('middle');
+  const pendingFrameCountRef = useRef<number>(0);
+  const confirmedPositionRef = useRef<ExercisePosition>('middle');
+
+  // Plank refs
+  const plankHoldStartRef = useRef<number>(0);
+  const plankBestRef = useRef<number>(0);
+
   // Keep refs in sync
   phaseRef.current = phase;
   isWorkoutRef.current = isWorkout;
   exerciseRef.current = selectedExercise;
-
-  // ------------------------------------------------------------------
-  // Init MediaPipe Pose Landmarker
-  // ------------------------------------------------------------------
-  const initPose = useCallback(async () => {
-    if (poseReady || poseLoading) return;
-    setPoseLoading(true);
-    setError(null);
-    try {
-      await getPoseLandmarker();
-      setPoseReady(true);
-    } catch (err) {
-      setError(`Failed to load pose model: ${err instanceof Error ? err.message : String(err)}`);
-    } finally {
-      setPoseLoading(false);
-    }
-  }, [poseReady, poseLoading]);
 
   // ------------------------------------------------------------------
   // Camera — native getUserMedia
@@ -190,7 +194,7 @@ export function FitnessTab() {
         const landmarks = results.landmarks[0];
 
         // Mirror landmarks for display
-        const mirroredLandmarks = landmarks.map(lm => ({
+        const mirroredLandmarks = landmarks.map((lm: NormalizedLandmark) => ({
           ...lm,
           x: 1 - lm.x,
         }));
@@ -214,18 +218,62 @@ export function FitnessTab() {
         setFormQuality(analysis.form);
         setFeedback(analysis.feedback);
 
+        // Skip rep logic if landmarks aren't confident
+        if (!analysis.confident) {
+          setFeedback('🔍 Move into the frame clearly...');
+          rafRef.current = requestAnimationFrame(detect);
+          return;
+        }
+
         if (analysis.form === 'bad') {
           formDuringRepRef.current = false;
         }
 
-        // Rep counting state machine
-        if (exercise.id !== 'plank') {
+        // ---- Plank: track hold time instead of reps ----
+        if (exercise.isHold) {
+          if (analysis.form === 'good') {
+            if (plankHoldStartRef.current === 0) {
+              plankHoldStartRef.current = Date.now();
+            }
+            const holdSec = Math.floor((Date.now() - plankHoldStartRef.current) / 1000);
+            setPlankHoldTime(holdSec);
+            if (holdSec > plankBestRef.current) {
+              plankBestRef.current = holdSec;
+              setPlankBestTime(holdSec);
+            }
+          } else {
+            // Form broke, reset hold timer
+            plankHoldStartRef.current = 0;
+            setPlankHoldTime(0);
+          }
+          rafRef.current = requestAnimationFrame(detect);
+          return;
+        }
+
+        // ---- Debounced position detection ----
+        // Only transition when N consecutive frames confirm same position
+        if (analysis.position === pendingPositionRef.current) {
+          pendingFrameCountRef.current++;
+        } else {
+          pendingPositionRef.current = analysis.position;
+          pendingFrameCountRef.current = 1;
+        }
+
+        // Only update confirmed position after debounce threshold
+        if (
+          pendingFrameCountRef.current >= DEBOUNCE_FRAMES &&
+          pendingPositionRef.current !== confirmedPositionRef.current
+        ) {
+          const newPosition = pendingPositionRef.current;
+          confirmedPositionRef.current = newPosition;
+
+          // Rep counting state machine (using confirmed/debounced positions)
           const prevPhase = phaseRef.current;
 
-          if (analysis.position === 'down' && (prevPhase === 'up' || prevPhase === 'idle')) {
+          if (newPosition === 'down' && (prevPhase === 'up' || prevPhase === 'idle')) {
             setPhase('down');
             phaseRef.current = 'down';
-          } else if (analysis.position === 'up') {
+          } else if (newPosition === 'up') {
             if (prevPhase === 'down') {
               // Rep completed! (down → up)
               setPhase('up');
@@ -255,8 +303,7 @@ export function FitnessTab() {
           }
         }
       } else {
-        // No pose detected — just draw the video
-        // (already drawn above)
+        // No pose detected
         setFeedback('🔍 Step into frame so I can see you!');
       }
 
@@ -280,6 +327,31 @@ export function FitnessTab() {
       default: return -1;
     }
   }
+
+  // ------------------------------------------------------------------
+  // Countdown helper
+  // ------------------------------------------------------------------
+  const runCountdown = useCallback((): Promise<void> => {
+    return new Promise((resolve) => {
+      let count = COUNTDOWN_SECONDS;
+      setCountdown(count);
+
+      const interval = setInterval(() => {
+        count--;
+        if (count > 0) {
+          setCountdown(count);
+        } else {
+          setCountdown(0); // Show "GO!"
+          clearInterval(interval);
+          // Brief delay to show "GO!" then resolve
+          setTimeout(() => {
+            setCountdown(null);
+            resolve();
+          }, 600);
+        }
+      }, 1000);
+    });
+  }, []);
 
   // ------------------------------------------------------------------
   // Workout session management
@@ -307,12 +379,19 @@ export function FitnessTab() {
       await startCamera();
     }
 
-    setIsWorkout(true);
-    isWorkoutRef.current = true;
+    // Reset debounce state
+    pendingPositionRef.current = 'middle';
+    pendingFrameCountRef.current = 0;
+    confirmedPositionRef.current = 'middle';
+
+    // Reset plank state
+    plankHoldStartRef.current = 0;
+    setPlankHoldTime(0);
+
     setPhase('idle');
     phaseRef.current = 'idle';
     setFormQuality('unknown');
-    setFeedback('🎯 Get into position! Pose detection starting...');
+    setFeedback('');
     formDuringRepRef.current = true;
     const freshStats: SessionStats = {
       correctReps: 0,
@@ -324,6 +403,14 @@ export function FitnessTab() {
     statsRef.current = freshStats;
     setElapsed(0);
 
+    // Run countdown
+    await runCountdown();
+
+    // Now start the actual workout
+    setIsWorkout(true);
+    isWorkoutRef.current = true;
+    setFeedback('🎯 Get moving! Pose detection active.');
+
     // Start detection loop
     startDetectionLoop();
 
@@ -331,13 +418,14 @@ export function FitnessTab() {
     timerRef.current = setInterval(() => {
       setElapsed(prev => prev + 1);
     }, 1000);
-  }, [poseReady, startCamera, startDetectionLoop]);
+  }, [poseReady, startCamera, startDetectionLoop, runCountdown]);
 
   const stopWorkout = useCallback(() => {
     setIsWorkout(false);
     isWorkoutRef.current = false;
     setPhase('idle');
     phaseRef.current = 'idle';
+    setCountdown(null);
 
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
@@ -362,6 +450,7 @@ export function FitnessTab() {
     setStats(freshStats);
     statsRef.current = freshStats;
     setElapsed(0);
+    setPlankHoldTime(0);
   }, [stopWorkout, stopCamera]);
 
   // ------------------------------------------------------------------
@@ -370,6 +459,8 @@ export function FitnessTab() {
   const totalReps = stats.correctReps + stats.incorrectReps;
   const accuracy = totalReps > 0 ? Math.round((stats.correctReps / totalReps) * 100) : 0;
   const formatTime = (s: number) => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
+
+  const isPlank = selectedExercise?.isHold === true;
 
   // ------------------------------------------------------------------
   // Render — Exercise Selection
@@ -386,7 +477,7 @@ export function FitnessTab() {
 
         <div className="fitness-hero">
           <div className="fitness-hero-icon">🏋️‍♂️</div>
-          <h2>AI Fitness Trainer</h2>
+          <h2>AI Fitness Coach</h2>
           <p className="text-muted">Select an exercise to start your workout</p>
           <p className="text-muted" style={{ fontSize: '11px', opacity: 0.6 }}>
             Powered by MediaPipe Pose • Real-time skeleton tracking
@@ -458,6 +549,21 @@ export function FitnessTab() {
             </div>
           )}
 
+          {/* Countdown overlay */}
+          {countdown !== null && (
+            <div className="countdown-overlay">
+              <div className="countdown-ring" key={countdown} />
+              {countdown > 0 ? (
+                <>
+                  <div className="countdown-number" key={`num-${countdown}`}>{countdown}</div>
+                  <div className="countdown-label">Get Ready</div>
+                </>
+              ) : (
+                <div className="countdown-go">GO!</div>
+              )}
+            </div>
+          )}
+
           {/* Form quality indicator */}
           {isWorkout && (
             <div className={`form-indicator ${formQuality}`}>
@@ -466,7 +572,7 @@ export function FitnessTab() {
           )}
 
           {/* Phase indicator */}
-          {isWorkout && phase !== 'idle' && (
+          {isWorkout && phase !== 'idle' && !isPlank && (
             <div className={`phase-indicator ${phase}`}>
               {phase === 'up' ? '⬆️ UP' : '⬇️ DOWN'}
             </div>
@@ -474,32 +580,42 @@ export function FitnessTab() {
         </div>
       </div>
 
-      {/* Rep Counter */}
-      <div className="rep-counter-section">
-        <div className="rep-counter-main">
-          <div className="rep-count-display">
-            <span className="rep-count-number">{totalReps}</span>
-            <span className="rep-count-label">REPS</span>
+      {/* Rep Counter OR Plank Hold Timer */}
+      {isPlank ? (
+        <div className="plank-hold-section">
+          <div className="plank-hold-time">{formatTime(plankHoldTime)}</div>
+          <div className="plank-hold-label">Hold Time</div>
+          {plankBestTime > 0 && (
+            <div className="plank-hold-best">🏆 Best: {formatTime(plankBestTime)}</div>
+          )}
+        </div>
+      ) : (
+        <div className="rep-counter-section">
+          <div className="rep-counter-main">
+            <div className="rep-count-display">
+              <span className="rep-count-number">{totalReps}</span>
+              <span className="rep-count-label">REPS</span>
+            </div>
+          </div>
+          <div className="rep-counter-details">
+            <div className="rep-detail correct">
+              <span className="rep-detail-icon">✅</span>
+              <span className="rep-detail-value">{stats.correctReps}</span>
+              <span className="rep-detail-label">Correct</span>
+            </div>
+            <div className="rep-detail incorrect">
+              <span className="rep-detail-icon">❌</span>
+              <span className="rep-detail-value">{stats.incorrectReps}</span>
+              <span className="rep-detail-label">Incorrect</span>
+            </div>
+            <div className="rep-detail accuracy">
+              <span className="rep-detail-icon">🎯</span>
+              <span className="rep-detail-value">{accuracy}%</span>
+              <span className="rep-detail-label">Accuracy</span>
+            </div>
           </div>
         </div>
-        <div className="rep-counter-details">
-          <div className="rep-detail correct">
-            <span className="rep-detail-icon">✅</span>
-            <span className="rep-detail-value">{stats.correctReps}</span>
-            <span className="rep-detail-label">Correct</span>
-          </div>
-          <div className="rep-detail incorrect">
-            <span className="rep-detail-icon">❌</span>
-            <span className="rep-detail-value">{stats.incorrectReps}</span>
-            <span className="rep-detail-label">Incorrect</span>
-          </div>
-          <div className="rep-detail accuracy">
-            <span className="rep-detail-icon">🎯</span>
-            <span className="rep-detail-value">{accuracy}%</span>
-            <span className="rep-detail-label">Accuracy</span>
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* Feedback */}
       {feedback && (
