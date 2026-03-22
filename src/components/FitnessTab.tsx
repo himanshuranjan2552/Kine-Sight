@@ -1,13 +1,46 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import {
-  EXERCISES,
-  getPoseLandmarker,
-  drawSkeleton,
-  drawAngleBadge,
-  LM,
-} from '../fitness/poseEngine';
+import { EXERCISES, getPoseLandmarker, drawSkeleton, drawAngleBadge, LM } from '../fitness/poseEngine';
 import type { ExerciseDef, PoseAnalysis, FormQuality, ExercisePosition } from '../fitness/poseEngine';
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision';
+import { ExerciseDemo } from './ExerciseDemo';
+
+// ---------------------------------------------------------------------------
+// Audio Feedback (Global context to bypass browser autoplay rules)
+// ---------------------------------------------------------------------------
+let audioCtx: AudioContext | null = null;
+
+function initAudioContext() {
+  if (!audioCtx) {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (AudioContextClass) audioCtx = new AudioContextClass();
+  }
+  if (audioCtx?.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+function playCorrectBeep() {
+  if (!audioCtx) return;
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.1);
+    
+    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.1);
+  } catch (err) {
+    console.warn('Audio beep failed', err);
+  }
+}
+
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -87,6 +120,9 @@ export function FitnessTab() {
   // Plank refs
   const plankHoldStartRef = useRef<number>(0);
   const plankBestRef = useRef<number>(0);
+
+  // Countdown masking ref
+  const isCountdownRef = useRef<boolean>(false);
 
   // Keep refs in sync
   phaseRef.current = phase;
@@ -229,6 +265,12 @@ export function FitnessTab() {
           formDuringRepRef.current = false;
         }
 
+        // Skip rep counting and time tracking if we are still counting down
+        if (isCountdownRef.current) {
+          rafRef.current = requestAnimationFrame(detect);
+          return;
+        }
+
         // ---- Plank: track hold time instead of reps ----
         if (exercise.isHold) {
           if (analysis.form === 'good') {
@@ -280,6 +322,8 @@ export function FitnessTab() {
               phaseRef.current = 'up';
 
               const isCorrect = formDuringRepRef.current;
+              if (isCorrect) playCorrectBeep();
+
               const newStats: SessionStats = {
                 ...statsRef.current,
                 correctReps: statsRef.current.correctReps + (isCorrect ? 1 : 0),
@@ -357,6 +401,9 @@ export function FitnessTab() {
   // Workout session management
   // ------------------------------------------------------------------
   const startWorkout = useCallback(async (exercise: ExerciseDef) => {
+    // Initialize audio context during user gesture to allow playback
+    initAudioContext();
+
     setSelectedExercise(exercise);
     exerciseRef.current = exercise;
 
@@ -391,7 +438,7 @@ export function FitnessTab() {
     setPhase('idle');
     phaseRef.current = 'idle';
     setFormQuality('unknown');
-    setFeedback('');
+    setFeedback('🎯 Get ready! Pose detection active.');
     formDuringRepRef.current = true;
     const freshStats: SessionStats = {
       correctReps: 0,
@@ -403,16 +450,19 @@ export function FitnessTab() {
     statsRef.current = freshStats;
     setElapsed(0);
 
-    // Run countdown
-    await runCountdown();
-
-    // Now start the actual workout
+    // Now start the actual workout detection (UI enabled, logic muted by isCountdownRef)
     setIsWorkout(true);
     isWorkoutRef.current = true;
-    setFeedback('🎯 Get moving! Pose detection active.');
+    isCountdownRef.current = true;
 
-    // Start detection loop
+    // Start detection loop immediately so user sees themself
     startDetectionLoop();
+
+    // Run countdown
+    await runCountdown();
+    
+    isCountdownRef.current = false;
+    setFeedback('🎯 Get moving!');
 
     // Start elapsed timer
     timerRef.current = setInterval(() => {
@@ -561,6 +611,14 @@ export function FitnessTab() {
               ) : (
                 <div className="countdown-go">GO!</div>
               )}
+            </div>
+          )}
+
+          {/* Persistent exercise demonstration side-overlay */}
+          {isWorkout && (
+            <div className="demo-overlay-wrapper">
+              <ExerciseDemo exerciseId={selectedExercise.id} />
+              <div className="demo-overlay-label">Form Demo</div>
             </div>
           )}
 

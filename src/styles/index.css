@@ -640,6 +640,34 @@ body {
   color: white;
 }
 
+/* Persistent Demo Overlay */
+.demo-overlay-wrapper {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 8px 4px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transform: scale(0.9);
+  transform-origin: top left;
+}
+
+.demo-overlay-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 2px;
+}
+
 /* ---------------------------------------------------------------------------
  * Countdown Timer Overlay
  * --------------------------------------------------------------------------- */
@@ -654,8 +682,8 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(6px);
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
   z-index: 20;
   border-radius: var(--radius);
 }

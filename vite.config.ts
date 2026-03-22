@@ -1,8 +1,35 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'icon.svg', 'apple-touch-icon.png'],
+      manifest: {
+        name: 'Kine-Sight AI Coach',
+        short_name: 'Kine-Sight',
+        description: 'AI Fitness Coach powered by MediaPipe pose tracking',
+        theme_color: '#0F172A',
+        background_color: '#0F172A',
+        display: 'standalone',
+        icons: [
+          {
+            src: 'icon.svg',
+            sizes: '192x192',
+            type: 'image/svg+xml'
+          },
+          {
+            src: 'icon.svg',
+            sizes: '512x512',
+            type: 'image/svg+xml'
+          }
+        ]
+      }
+    })
+  ],
   server: {
     headers: {
       // Cross-Origin Isolation — required for SharedArrayBuffer (MediaPipe)
