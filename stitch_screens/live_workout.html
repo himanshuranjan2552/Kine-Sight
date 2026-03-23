@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-background": "#101d25",
+              "inverse-on-surface": "#e5f2fe",
+              "inverse-primary": "#ffb59d",
+              "outline-variant": "#e5beb2",
+              "surface-container-highest": "#d7e4f0",
+              "surface": "#f5faff",
+              "inverse-surface": "#25323b",
+              "primary-container": "#d14300",
+              "surface-bright": "#f5faff",
+              "background": "#f5faff",
+              "on-secondary-container": "#636262",
+              "tertiary-container": "#697680",
+              "on-primary-fixed-variant": "#832700",
+              "surface-dim": "#cedce7",
+              "error": "#ba1a1a",
+              "on-surface": "#101d25",
+              "outline": "#907065",
+              "surface-variant": "#d7e4f0",
+              "surface-tint": "#ab3500",
+              "on-error-container": "#93000a",
+              "on-secondary": "#ffffff",
+              "on-primary-fixed": "#390c00",
+              "secondary": "#5f5e5e",
+              "on-tertiary": "#ffffff",
+              "on-tertiary-container": "#fcfcff",
+              "on-primary-container": "#fffbff",
+              "secondary-fixed": "#e5e2e1",
+              "primary": "#a73400",
+              "primary-fixed-dim": "#ffb59d",
+              "surface-container-high": "#dceaf5",
+              "surface-container-lowest": "#ffffff",
+              "primary-fixed": "#ffdbd0",
+              "secondary-fixed-dim": "#c8c6c5",
+              "on-secondary-fixed-variant": "#474746",
+              "error-container": "#ffdad6",
+              "tertiary": "#515e67",
+              "on-primary": "#ffffff",
+              "on-tertiary-fixed-variant": "#3c4852",
+              "surface-container-low": "#eaf5ff",
+              "surface-container": "#e2f0fb",
+              "tertiary-fixed": "#d7e4f0",
+              "on-tertiary-fixed": "#101d25",
+              "secondary-container": "#e2dfde",
+              "on-surface-variant": "#5c4037",
+              "on-error": "#ffffff",
+              "on-secondary-fixed": "#1b1b1c",
+              "tertiary-fixed-dim": "#bbc8d3"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .skeleton-overlay {
+            background: linear-gradient(to bottom, rgba(167, 52, 0, 0.1), transparent);
+        }
+        .perspective-text {
+            text-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm dark:shadow-none">
+<div class="flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container">
+<img alt="user profile picture" class="w-full h-full object-cover" data-alt="Athletic trainer profile portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhnrrFTxYy0smX7InHB9gQkQ7zhATqkLFAwWiDZ2Co6ZuPCd0Jq8ofoU3ZgZd9bTZKbWAO62NqpW24pITNWfufWdNfT-gBW-fWnozj4TItO9hboKsZpfAJWiRf_0cBn2Kx_ydlPAW1sF0UMV5nvrzUFKRwfhTluClwE0D-ofE9aQ0DB5MNl5oGcN6hS5mtSBWzxH5YSfy9Oa3xZrwC2h8YBSAicIorum_3NWZsPycZNOg39KNTbu2NGi0h1s8YRsvZYQnv9pQIMADc"/>
+</div>
+<span class="text-xl font-black italic tracking-tighter text-slate-900 dark:text-white">KINETIC</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#FC5200] dark:text-[#FC5200] text-2xl active:scale-95 duration-200 cursor-pointer" data-icon="local_fire_department">local_fire_department</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col pt-16 pb-20 lg:pb-0 h-screen overflow-hidden">
+<!-- Camera Viewport & AI Overlay -->
+<section class="relative flex-grow bg-inverse-surface overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="workout view" class="w-full h-full object-cover opacity-60 grayscale brightness-75" data-alt="Silhouette of person performing a deep squat" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXmhwZVXFhXUE6WWqIWHxN7QMlZ87YF9Czc7NCjR1h7Blwu_voT_8npjNMu-0Tt7hfGzOpfASDk527cd0wkrQzhKtRLduKim1X1_zu-vnXvaFP21BzzHXjHlOcCcmwfxERJikTr-TGKI7oZyy7JsLvYRlxjRhQl1qMHfJYNRyOwh_phU4CJMNh-PdyKgEzIB7qpGGfZx6yjrVVWOie2zcxSCHZr6o05HnWCzTbHqEmNUpGzBtrsV78QnkiFsDbgfpnl9-x9AHDUgkQ"/>
+</div>
+<!-- AI Skeleton Wireframe Mockup -->
+<svg class="absolute inset-0 z-10 w-full h-full pointer-events-none opacity-80" preserveaspectratio="xMidYMid slice" viewbox="0 0 400 600">
+<g fill="none" stroke="#a73400" stroke-width="2">
+<!-- Spine -->
+<line x1="200" x2="200" y1="150" y2="300"></line>
+<!-- Shoulders -->
+<line x1="150" x2="250" y1="180" y2="180"></line>
+<!-- Hips -->
+<line x1="170" x2="230" y1="300" y2="300"></line>
+<!-- Arms -->
+<line x1="150" x2="120" y1="180" y2="250"></line>
+<line x1="250" x2="280" y1="180" y2="250"></line>
+<!-- Legs (Squat Position) -->
+<line x1="170" x2="130" y1="300" y2="380"></line>
+<line x1="230" x2="270" y1="300" y2="380"></line>
+<line stroke="#error" x1="130" x2="170" y1="380" y2="480"></line>
+<line stroke="#error" x1="270" x2="230" y1="380" y2="480"></line>
+</g>
+<!-- Joints -->
+<g fill="#ffffff">
+<circle cx="200" cy="150" r="4"></circle>
+<circle cx="150" cy="180" r="3"></circle>
+<circle cx="250" cy="180" r="3"></circle>
+<circle cx="170" cy="300" r="3"></circle>
+<circle cx="230" cy="300" r="3"></circle>
+<circle cx="130" cy="380" fill="#FC5200" r="5"></circle>
+<circle cx="270" cy="380" fill="#FC5200" r="5"></circle>
+</g>
+</svg>
+<!-- Dynamic Feedback Banner -->
+<div class="absolute top-6 left-1/2 -translate-x-1/2 z-20 w-[90%] max-w-md">
+<div class="bg-error/90 backdrop-blur-md px-6 py-4 rounded-xl flex items-center justify-between shadow-2xl">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-white" data-icon="warning">warning</span>
+<p class="font-headline font-bold text-white tracking-tight text-lg uppercase">Keep your back straight</p>
+</div>
+<div class="h-2 w-2 rounded-full bg-white animate-pulse"></div>
+</div>
+</div>
+<!-- Corner Context Tags -->
+<div class="absolute bottom-6 right-6 z-20 flex flex-col gap-2">
+<div class="bg-black/40 backdrop-blur-md px-3 py-1 rounded-lg border border-white/10">
+<p class="text-[10px] text-white/70 uppercase font-bold tracking-widest">AI Confidence</p>
+<p class="text-white font-black italic">98.4%</p>
+</div>
+</div>
+</section>
+<!-- Metrics Section (Asymmetric Bento Grid) -->
+<section class="bg-surface px-6 py-8 grid grid-cols-2 md:grid-cols-4 gap-4 z-30">
+<!-- Time Elapsed -->
+<div class="col-span-1 bg-surface-container-lowest p-6 rounded-xl flex flex-col justify-between">
+<label class="text-[0.75rem] font-bold uppercase tracking-widest text-secondary mb-2">Duration</label>
+<div class="flex items-baseline gap-1">
+<span class="text-4xl md:text-5xl font-black italic tracking-tighter">12:44</span>
+</div>
+</div>
+<!-- Main Metric: Reps -->
+<div class="col-span-1 bg-surface-container-lowest p-6 rounded-xl border-l-4 border-primary flex flex-col justify-between relative overflow-hidden">
+<label class="text-[0.75rem] font-bold uppercase tracking-widest text-secondary mb-2">Total Reps</label>
+<div class="relative z-10">
+<span class="text-6xl md:text-7xl font-black italic tracking-tighter leading-none">24</span>
+<span class="text-[0.75rem] font-bold uppercase text-primary block mt-1">+3 this set</span>
+</div>
+<div class="absolute -right-4 -bottom-4 text-primary/5 select-none">
+<span class="material-symbols-outlined text-9xl" data-icon="fitness_center">fitness_center</span>
+</div>
+</div>
+<!-- Accuracy Split (Bento Card Large) -->
+<div class="col-span-2 bg-surface-container-lowest p-6 rounded-xl flex flex-col justify-between">
+<label class="text-[0.75rem] font-bold uppercase tracking-widest text-secondary mb-4">Performance Accuracy</label>
+<div class="flex items-end gap-4 h-full">
+<div class="flex-grow flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<span class="text-sm font-bold uppercase text-on-surface">Correct</span>
+<span class="text-2xl font-black italic text-on-background">18</span>
+</div>
+<div class="h-4 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary-container" style="width: 75%"></div>
+</div>
+</div>
+<div class="flex-grow flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<span class="text-sm font-bold uppercase text-secondary">Incorrect</span>
+<span class="text-2xl font-black italic text-secondary">6</span>
+</div>
+<div class="h-4 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-orange-200" style="width: 25%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Controls (Action Bar) -->
+<div class="col-span-2 md:col-span-4 flex gap-4 mt-4">
+<button class="flex-1 bg-surface-container-highest h-16 rounded-xl flex items-center justify-center gap-3 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-2xl" data-icon="pause">pause</span>
+<span class="font-headline font-extrabold uppercase tracking-tight text-lg">Pause Session</span>
+</button>
+<button class="flex-1 bg-gradient-to-r from-primary to-primary-container h-16 rounded-xl flex items-center justify-center gap-3 text-white shadow-xl active:scale-95 transition-all">
+<span class="material-symbols-outlined text-2xl" data-icon="stop">stop</span>
+<span class="font-headline font-extrabold uppercase tracking-tight text-lg">End Workout</span>
+</button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg border-t border-slate-100 dark:border-slate-800 pb-safe shadow-[0_-4px_24px_rgba(0,0,0,0.04)] md:hidden">
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 hover:text-[#FC5200] transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="home">home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#FC5200] scale-110 transition-transform active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="smart_toy" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 hover:text-[#FC5200] transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="insert_chart">insert_chart</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 hover:text-[#FC5200] transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined text-2xl" data-icon="person">person</span>
+</a>
+</nav>
+</body></html>

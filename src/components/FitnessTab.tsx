@@ -513,40 +513,124 @@ export function FitnessTab() {
   const isPlank = selectedExercise?.isHold === true;
 
   // ------------------------------------------------------------------
-  // Render — Exercise Selection
+  // Render
   // ------------------------------------------------------------------
   if (!selectedExercise) {
     return (
-      <div className="tab-panel fitness-panel">
-        {/* Pose model loading banner */}
-        {poseLoading && (
-          <div className="model-banner">
-            <span>Loading MediaPipe Pose model...</span>
+      <div className="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-white pb-24 min-h-screen">
+        {/* TopAppBar Shell */}
+        <header className="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm dark:shadow-none h-16 px-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-xl font-black italic tracking-tighter text-slate-900 dark:text-white">KINETIC</span>
           </div>
-        )}
+          <div className="flex items-center gap-4">
+            <span className="material-symbols-outlined text-[#FC5200] text-2xl" data-icon="local_fire_department">local_fire_department</span>
+          </div>
+        </header>
 
-        <div className="fitness-hero">
-          <div className="fitness-hero-icon">🏋️‍♂️</div>
-          <h2>AI Fitness Coach</h2>
-          <p className="text-muted">Select an exercise to start your workout</p>
-          <p className="text-muted" style={{ fontSize: '11px', opacity: 0.6 }}>
-            Powered by MediaPipe Pose • Real-time skeleton tracking
-          </p>
-        </div>
+        <main className="pt-24 pb-24 px-4 md:px-8 max-w-5xl mx-auto">
+          {/* AI Coach Hero Header */}
+          <section className="mb-10">
+            <div className="flex items-baseline gap-2 mb-2">
+              <span className="label-md text-secondary uppercase tracking-widest font-bold">Session Objective</span>
+              <div className="h-px flex-grow bg-surface-container-high"></div>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-on-background leading-none mb-4">
+              Let's calibrate your <span className="text-primary italic">next move.</span>
+            </h1>
+            <p className="text-secondary body-md max-w-lg">
+              I'm your Kinetic AI. Tell me your constraints, and I'll generate a precision-engineered routine for maximum athletic output.
+            </p>
+          </section>
 
-        <div className="exercise-grid">
-          {EXERCISES.map(ex => (
-            <button
-              key={ex.id}
-              className="exercise-card"
-              onClick={() => startWorkout(ex)}
-              disabled={poseLoading}
-            >
-              <span className="exercise-icon">{ex.icon}</span>
-              <span className="exercise-name">{ex.name}</span>
-            </button>
-          ))}
-        </div>
+          {/* Dynamic Constraint Toggles */}
+          <section className="mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-surface-container-lowest p-5 rounded-xl transition-all active:scale-95 border-b-4 border-transparent hover:border-primary cursor-pointer group">
+                <span className="material-symbols-outlined text-primary mb-3 block" data-icon="schedule">schedule</span>
+                <p className="label-md text-secondary mb-1">DURATION</p>
+                <h3 className="headline-sm font-bold">30 mins</h3>
+              </div>
+              <div className="bg-surface-container-lowest p-5 rounded-xl transition-all active:scale-95 border-b-4 border-transparent hover:border-primary cursor-pointer group">
+                <span className="material-symbols-outlined text-primary mb-3 block" data-icon="fitness_center">fitness_center</span>
+                <p className="label-md text-secondary mb-1">EQUIPMENT</p>
+                <h3 className="headline-sm font-bold">Dumbbells</h3>
+              </div>
+              <div className="bg-surface-container-lowest p-5 rounded-xl transition-all active:scale-95 border-b-4 border-primary cursor-pointer group">
+                <span className="material-symbols-outlined text-primary mb-3 block" data-icon="target">target</span>
+                <p className="label-md text-secondary mb-1">FOCUS</p>
+                <h3 className="headline-sm font-bold">Core Focus</h3>
+              </div>
+              <div className="bg-surface-container-lowest p-5 rounded-xl transition-all active:scale-95 border-b-4 border-transparent hover:border-primary cursor-pointer group">
+                <span className="material-symbols-outlined text-primary mb-3 block" data-icon="bolt">bolt</span>
+                <p className="label-md text-secondary mb-1">INTENSITY</p>
+                <h3 className="headline-sm font-bold">High (RPE 8)</h3>
+              </div>
+            </div>
+          </section>
+
+          {/* Generated Routine Section (Bento Style) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div className="lg:col-span-8 space-y-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="headline-lg font-black tracking-tighter uppercase text-2xl">Available Routines</h2>
+                <div className="flex gap-2">
+                  <span className="px-3 py-1 bg-surface-container-high rounded-full text-[10px] font-black tracking-widest uppercase">Select to Start</span>
+                </div>
+              </div>
+
+              {/* Pose model loading banner */}
+              {poseLoading && (
+                <div className="bg-surface-container-high p-4 rounded-xl text-center mb-4 text-primary font-bold animate-pulse">
+                  Loading MediaPipe Pose model...
+                </div>
+              )}
+
+              {EXERCISES.map((ex) => (
+                <div
+                  key={ex.id}
+                  onClick={() => !poseLoading && startWorkout(ex)}
+                  className={`group relative bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col md:flex-row h-auto md:h-48 border border-transparent hover:border-primary/20 transition-all ${poseLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <div className="w-full md:w-32 lg:w-48 h-48 bg-surface-container flex flex-col items-center justify-center text-4xl overflow-hidden relative shrink-0">
+                    <span className="z-10 text-6xl group-hover:scale-125 transition-transform duration-500">{ex.icon}</span>
+                    <div className="absolute inset-0 bg-gradient-to-tr from-surface-container to-surface-container-high opacity-50 z-0"></div>
+                  </div>
+                  <div className="flex-grow p-6 flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="text-xl font-extrabold uppercase tracking-tight">{ex.name}</h4>
+                        <span className="text-primary font-bold text-sm whitespace-nowrap ml-2">Active AI</span>
+                      </div>
+                      <p className="text-secondary text-sm my-2 line-clamp-2">
+                        {ex.tips && ex.tips.length > 0 ? ex.tips[0] : 'Use AI to check your form in real-time.'}
+                      </p>
+                    </div>
+                    <div className="flex gap-4 mt-2">
+                      <button className="bg-gradient-to-r from-primary to-primary-container text-white px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-md group-hover:shadow-lg transition-all active:scale-95">
+                        Start Workout
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Sidebar: Performance Insights */}
+            <div className="lg:col-span-4 space-y-6">
+              <div className="bg-inverse-surface text-inverse-on-surface p-6 rounded-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary-container/20 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="material-symbols-outlined text-primary text-xl" data-icon="auto_awesome">auto_awesome</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest">Kinetic Coach Insight</span>
+                </div>
+                <p className="text-lg font-medium leading-relaxed italic z-10 relative">
+                  "Your form is the bridge between power and stability. The AI will guide you to perfection."
+                </p>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
@@ -555,165 +639,165 @@ export function FitnessTab() {
   // Render — Active Workout
   // ------------------------------------------------------------------
   return (
-    <div className="tab-panel fitness-panel">
-      {/* Pose model loading banner */}
-      {poseLoading && (
-        <div className="model-banner">
-          <span>Loading MediaPipe Pose model...</span>
+    <div className="bg-surface text-on-surface font-body min-h-screen flex flex-col h-[100dvh]">
+      {/* TopAppBar */}
+      <header className="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm dark:shadow-none">
+        <div className="flex items-center justify-between px-6 h-16 w-full">
+          <div className="flex items-center gap-3">
+            <span className="text-xl font-black italic tracking-tighter text-slate-900 dark:text-white">KINETIC</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="font-bold text-sm uppercase tracking-widest">{selectedExercise.name}</span>
+          </div>
         </div>
-      )}
+      </header>
 
-      {/* Header */}
-      <div className="fitness-workout-header">
-        <div className="fitness-exercise-label">
-          <span className="exercise-icon-sm">{selectedExercise.icon}</span>
-          <span>{selectedExercise.name}</span>
-        </div>
-        <div className="fitness-header-right">
-          <div className="fitness-angle-badge">{currentAngle}°</div>
-          <div className="fitness-timer">{formatTime(elapsed)}</div>
-        </div>
-      </div>
-
-      {/* Camera Feed + Skeleton Overlay */}
-      <div className="fitness-camera-wrapper">
-        <div className={`fitness-camera ${formQuality === 'good' ? 'form-good' : formQuality === 'bad' ? 'form-bad' : ''}`}>
-          {/* Hidden video element — MediaPipe reads from this */}
-          <video
-            ref={videoRef}
-            style={{ display: 'none' }}
-            playsInline
-            muted
-          />
-
-          {/* Canvas overlay — skeleton + video drawn here */}
-          <canvas
-            ref={canvasRef}
-            className="skeleton-canvas"
-          />
+      {/* Main Content Canvas */}
+      <main className="flex-grow flex flex-col pt-16 h-full overflow-hidden">
+        {/* Camera Viewport & AI Overlay */}
+        <section className="relative flex-grow bg-inverse-surface border-b border-outline-variant/20 overflow-hidden flex items-center justify-center">
+          <div className="absolute inset-0 z-0">
+            {/* Hidden video element — MediaPipe reads from this */}
+            <video
+              ref={videoRef}
+              style={{ display: 'none' }}
+              playsInline
+              muted
+            />
+            {/* Canvas overlay — skeleton + video drawn here */}
+            <canvas
+              ref={canvasRef}
+              className="w-full h-full object-contain"
+            />
+          </div>
 
           {!cameraActive && !poseLoading && (
-            <div className="empty-state">
-              <h3>📷 Camera</h3>
-              <p>Starting camera...</p>
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-white bg-black/50">
+              <span className="material-symbols-outlined text-6xl mb-4">videocam</span>
+              <h3 className="text-xl font-bold">Starting camera...</h3>
             </div>
           )}
 
           {/* Countdown overlay */}
           {countdown !== null && (
-            <div className="countdown-overlay">
-              <div className="countdown-ring" key={countdown} />
-              {countdown > 0 ? (
-                <>
-                  <div className="countdown-number" key={`num-${countdown}`}>{countdown}</div>
-                  <div className="countdown-label">Get Ready</div>
-                </>
-              ) : (
-                <div className="countdown-go">GO!</div>
-              )}
+            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm">
+              <div className="text-9xl font-black text-white italic drop-shadow-2xl animate-pulse">
+                {countdown > 0 ? countdown : 'GO!'}
+              </div>
+              {countdown > 0 && <div className="text-xl text-white/80 font-bold uppercase tracking-widest mt-4">Get Ready</div>}
             </div>
           )}
 
-          {/* Persistent exercise demonstration side-overlay */}
-          {isWorkout && (
-            <div className="demo-overlay-wrapper">
-              <ExerciseDemo exerciseId={selectedExercise.id} />
-              <div className="demo-overlay-label">Form Demo</div>
+          {/* Dynamic Feedback Banner */}
+          {feedback && !isCountdownRef.current && (
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 w-[90%] max-w-md">
+              <div className={`backdrop-blur-md px-6 py-4 rounded-xl flex items-center justify-between shadow-2xl transition-colors ${formQuality === 'bad' ? 'bg-error/90' : (formQuality === 'good' ? 'bg-green-600/90' : 'bg-orange-500/90')}`}>
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined text-white" data-icon={formQuality === 'bad' ? 'warning' : 'info'}>
+                    {formQuality === 'bad' ? 'warning' : (formQuality === 'good' ? 'check_circle' : 'info')}
+                  </span>
+                  <p className="font-headline font-bold text-white tracking-tight text-lg uppercase h-6 overflow-hidden text-ellipsis whitespace-nowrap">{feedback}</p>
+                </div>
+              </div>
             </div>
           )}
 
-          {/* Form quality indicator */}
-          {isWorkout && (
-            <div className={`form-indicator ${formQuality}`}>
-              {formQuality === 'good' ? '✓' : formQuality === 'bad' ? '✗' : '?'}
-            </div>
-          )}
-
-          {/* Phase indicator */}
-          {isWorkout && phase !== 'idle' && !isPlank && (
-            <div className={`phase-indicator ${phase}`}>
-              {phase === 'up' ? '⬆️ UP' : '⬇️ DOWN'}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Rep Counter OR Plank Hold Timer */}
-      {isPlank ? (
-        <div className="plank-hold-section">
-          <div className="plank-hold-time">{formatTime(plankHoldTime)}</div>
-          <div className="plank-hold-label">Hold Time</div>
-          {plankBestTime > 0 && (
-            <div className="plank-hold-best">🏆 Best: {formatTime(plankBestTime)}</div>
-          )}
-        </div>
-      ) : (
-        <div className="rep-counter-section">
-          <div className="rep-counter-main">
-            <div className="rep-count-display">
-              <span className="rep-count-number">{totalReps}</span>
-              <span className="rep-count-label">REPS</span>
+          {/* Corner Context Tags */}
+          <div className="absolute bottom-6 right-6 z-20 flex flex-col gap-2 border border-white/10 rounded-lg p-2 bg-black/40 backdrop-blur-md">
+            <div className="flex items-center gap-2">
+              <p className="text-[10px] text-white/70 uppercase font-bold tracking-widest">Angle</p>
+              <p className="text-white font-black italic text-lg">{currentAngle}°</p>
             </div>
           </div>
-          <div className="rep-counter-details">
-            <div className="rep-detail correct">
-              <span className="rep-detail-icon">✅</span>
-              <span className="rep-detail-value">{stats.correctReps}</span>
-              <span className="rep-detail-label">Correct</span>
-            </div>
-            <div className="rep-detail incorrect">
-              <span className="rep-detail-icon">❌</span>
-              <span className="rep-detail-value">{stats.incorrectReps}</span>
-              <span className="rep-detail-label">Incorrect</span>
-            </div>
-            <div className="rep-detail accuracy">
-              <span className="rep-detail-icon">🎯</span>
-              <span className="rep-detail-value">{accuracy}%</span>
-              <span className="rep-detail-label">Accuracy</span>
+
+          {/* Form Demo Side Overlay */}
+          <div className="absolute bottom-6 left-6 z-20 w-32 bg-black/40 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden">
+             <ExerciseDemo exerciseId={selectedExercise.id} />
+             <div className="bg-black/60 text-center py-1 text-[10px] font-bold text-white uppercase tracking-widest">Target Form</div>
+          </div>
+        </section>
+
+        {/* Metrics Section (Asymmetric Bento Grid) */}
+        <section className="bg-surface px-6 py-6 grid grid-cols-2 md:grid-cols-4 gap-4 z-30 shrink-0">
+          {/* Time Elapsed */}
+          <div className="col-span-1 bg-surface-container-lowest p-4 rounded-xl flex flex-col justify-between shadow-sm">
+            <label className="text-[0.75rem] font-bold uppercase tracking-widest text-secondary mb-2">Duration</label>
+            <div className="flex items-baseline gap-1">
+              <span className="text-3xl lg:text-4xl font-black italic tracking-tighter">{formatTime(elapsed)}</span>
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Feedback */}
-      {feedback && (
-        <div className={`fitness-feedback ${formQuality}`}>
-          <p>{feedback}</p>
-        </div>
-      )}
+          {/* Main Metric: Reps or Plank Time */}
+          <div className="col-span-1 bg-surface-container-lowest p-4 rounded-xl border-l-4 border-primary flex flex-col justify-between relative overflow-hidden shadow-sm">
+            {isPlank ? (
+              <>
+                <label className="text-[0.75rem] font-bold uppercase tracking-widest text-secondary mb-2">Hold Time</label>
+                <div className="relative z-10">
+                  <span className="text-5xl lg:text-6xl font-black italic tracking-tighter leading-none">{formatTime(plankHoldTime)}</span>
+                </div>
+                {plankBestTime > 0 && <span className="text-[0.65rem] font-bold uppercase text-primary block mt-1 absolute bottom-4 left-4 z-10">🏆 Best: {formatTime(plankBestTime)}</span>}
+                <div className="absolute -right-4 -bottom-4 text-primary/5 select-none pointer-events-none">
+                  <span className="material-symbols-outlined text-7xl" data-icon="timer">timer</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <label className="text-[0.75rem] font-bold uppercase tracking-widest text-secondary mb-2">Total Reps</label>
+                <div className="relative z-10">
+                  <span className="text-5xl lg:text-6xl font-black italic tracking-tighter leading-none">{totalReps}</span>
+                </div>
+                <div className="absolute -right-4 -bottom-4 text-primary/5 select-none pointer-events-none">
+                  <span className="material-symbols-outlined text-7xl" data-icon="fitness_center">fitness_center</span>
+                </div>
+              </>
+            )}
+          </div>
 
-      {/* Tips */}
-      <div className="fitness-tips">
-        <h4>💡 Tips for {selectedExercise.name}</h4>
-        <ul>
-          {selectedExercise.tips.map((tip, i) => (
-            <li key={i}>{tip}</li>
-          ))}
-        </ul>
-      </div>
+          {/* Accuracy Split (Bento Card Large) */}
+          <div className="col-span-2 bg-surface-container-lowest p-4 rounded-xl flex flex-col justify-between shadow-sm">
+            <label className="text-[0.75rem] font-bold uppercase tracking-widest text-secondary mb-4">Performance Accuracy</label>
+            <div className="flex items-end gap-4 h-full">
+              <div className="flex-grow flex flex-col gap-2">
+                <div className="flex justify-between items-end">
+                  <span className="text-xs lg:text-sm font-bold uppercase text-on-surface">Correct</span>
+                  <span className="text-xl lg:text-2xl font-black italic text-on-background">{stats.correctReps}</span>
+                </div>
+                <div className="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden">
+                  <div className="h-full bg-primary-container transition-all duration-300" style={{ width: `${totalReps > 0 ? (stats.correctReps / totalReps) * 100 : 0}%` }}></div>
+                </div>
+              </div>
+              <div className="flex-grow flex flex-col gap-2">
+                <div className="flex justify-between items-end">
+                  <span className="text-xs lg:text-sm font-bold uppercase text-secondary">Incorrect</span>
+                  <span className="text-xl lg:text-2xl font-black italic text-secondary">{stats.incorrectReps}</span>
+                </div>
+                <div className="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden">
+                  <div className="h-full bg-orange-300 transition-all duration-300" style={{ width: `${totalReps > 0 ? (stats.incorrectReps / totalReps) * 100 : 0}%` }}></div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-      {/* Error */}
-      {error && (
-        <div className="fitness-error">
-          <span className="error-text">Error: {error}</span>
-        </div>
-      )}
-
-      {/* Controls */}
-      <div className="fitness-controls">
-        {isWorkout ? (
-          <button className="btn btn-stop" onClick={stopWorkout}>
-            ⏹ Stop Workout
-          </button>
-        ) : (
-          <button className="btn btn-primary btn-lg" onClick={() => startWorkout(selectedExercise)}>
-            ▶ Resume
-          </button>
-        )}
-        <button className="btn" onClick={resetSession}>
-          ↩ Change Exercise
-        </button>
-      </div>
+          {/* Controls (Action Bar) */}
+          <div className="col-span-2 md:col-span-4 flex gap-4 mt-2">
+            <button onClick={resetSession} className="flex-1 bg-surface-container-highest h-14 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-all text-on-surface hover:bg-surface-variant shadow-sm border border-outline-variant/30">
+              <span className="material-symbols-outlined text-xl" data-icon="close">close</span>
+              <span className="font-headline font-extrabold uppercase tracking-tight text-sm lg:text-base">Change Exercise</span>
+            </button>
+            {isWorkout ? (
+              <button onClick={stopWorkout} className="flex-1 bg-gradient-to-r from-primary to-primary-container h-14 rounded-xl flex items-center justify-center gap-2 text-white shadow-md active:scale-95 transition-all hover:shadow-lg">
+                <span className="material-symbols-outlined text-xl" data-icon="stop">stop</span>
+                <span className="font-headline font-extrabold uppercase tracking-tight text-sm lg:text-base">End Workout</span>
+              </button>
+            ) : (
+              <button onClick={() => startWorkout(selectedExercise)} className="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-500 h-14 rounded-xl flex items-center justify-center gap-2 text-white shadow-md active:scale-95 transition-all hover:shadow-lg">
+                <span className="material-symbols-outlined text-xl" data-icon="play_arrow">play_arrow</span>
+                <span className="font-headline font-extrabold uppercase tracking-tight text-sm lg:text-base">Resume</span>
+              </button>
+            )}
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

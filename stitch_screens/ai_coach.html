@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>KINETIC | AI Fitness Coach</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-background": "#101d25",
+              "inverse-on-surface": "#e5f2fe",
+              "inverse-primary": "#ffb59d",
+              "outline-variant": "#e5beb2",
+              "surface-container-highest": "#d7e4f0",
+              "surface": "#f5faff",
+              "inverse-surface": "#25323b",
+              "primary-container": "#d14300",
+              "surface-bright": "#f5faff",
+              "background": "#f5faff",
+              "on-secondary-container": "#636262",
+              "tertiary-container": "#697680",
+              "on-primary-fixed-variant": "#832700",
+              "surface-dim": "#cedce7",
+              "error": "#ba1a1a",
+              "on-surface": "#101d25",
+              "outline": "#907065",
+              "surface-variant": "#d7e4f0",
+              "surface-tint": "#ab3500",
+              "on-error-container": "#93000a",
+              "on-secondary": "#ffffff",
+              "on-primary-fixed": "#390c00",
+              "secondary": "#5f5e5e",
+              "on-tertiary": "#ffffff",
+              "on-tertiary-container": "#fcfcff",
+              "on-primary-container": "#fffbff",
+              "secondary-fixed": "#e5e2e1",
+              "primary": "#a73400",
+              "primary-fixed-dim": "#ffb59d",
+              "surface-container-high": "#dceaf5",
+              "surface-container-lowest": "#ffffff",
+              "primary-fixed": "#ffdbd0",
+              "secondary-fixed-dim": "#c8c6c5",
+              "on-secondary-fixed-variant": "#474746",
+              "error-container": "#ffdad6",
+              "tertiary": "#515e67",
+              "on-primary": "#ffffff",
+              "on-tertiary-fixed-variant": "#3c4852",
+              "surface-container-low": "#eaf5ff",
+              "surface-container": "#e2f0fb",
+              "tertiary-fixed": "#d7e4f0",
+              "on-tertiary-fixed": "#101d25",
+              "secondary-container": "#e2dfde",
+              "on-surface-variant": "#5c4037",
+              "on-error": "#ffffff",
+              "on-secondary-fixed": "#1b1b1c",
+              "tertiary-fixed-dim": "#bbc8d3"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-white">
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm dark:shadow-none h-16 px-6 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-highest">
+<img alt="user profile picture" class="w-full h-full object-cover" data-alt="Close up of a professional athlete face" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDbp4LpTLEtL2TM7uKdhP-jByoGbDZIGefOVcWwAJs0G2nPUWmldtu3o7wOqtv6YOqvjzI4Gn28sr5y-SPXwgfjMguLjgdaczPfnjVXJWd1djV5P4UyRRtdr0D2hit7CxtDncUGVOU79gIb2N1t2oPMborWc4J2mVxt2Z3xI7WTgAmRAwdYj8DG29iRQQwys6DG27wX0iWHdGjOBhNQ7UmF--9cxkrqOAHyrLmjppf7u5_c_tnUf7VA8KyVn2yd7DW2xVboJ8UX46b"/>
+</div>
+<span class="text-xl font-black italic tracking-tighter text-slate-900 dark:text-white">KINETIC</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#FC5200] text-2xl" data-icon="local_fire_department">local_fire_department</span>
+</div>
+</header>
+<main class="pt-20 pb-24 px-4 md:px-8 max-w-5xl mx-auto">
+<!-- AI Coach Hero Header -->
+<section class="mb-10">
+<div class="flex items-baseline gap-2 mb-2">
+<span class="label-md text-secondary uppercase tracking-widest font-bold">Session Objective</span>
+<div class="h-px flex-grow bg-surface-container-high"></div>
+</div>
+<h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-on-background leading-none mb-4">
+                Let's calibrate your <span class="text-primary italic">next move.</span>
+</h1>
+<p class="text-secondary body-md max-w-lg">
+                I'm your Kinetic AI. Tell me your constraints, and I'll generate a precision-engineered routine for maximum athletic output.
+            </p>
+</section>
+<!-- Dynamic Constraint Toggles -->
+<section class="mb-12">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-surface-container-lowest p-5 rounded-xl transition-all active:scale-95 border-b-4 border-transparent hover:border-primary cursor-pointer group">
+<span class="material-symbols-outlined text-primary mb-3 block" data-icon="schedule">schedule</span>
+<p class="label-md text-secondary mb-1">DURATION</p>
+<h3 class="headline-sm font-bold">30 mins</h3>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-xl transition-all active:scale-95 border-b-4 border-transparent hover:border-primary cursor-pointer group">
+<span class="material-symbols-outlined text-primary mb-3 block" data-icon="fitness_center">fitness_center</span>
+<p class="label-md text-secondary mb-1">EQUIPMENT</p>
+<h3 class="headline-sm font-bold">Dumbbells</h3>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-xl transition-all active:scale-95 border-b-4 border-primary cursor-pointer group">
+<span class="material-symbols-outlined text-primary mb-3 block" data-icon="target">target</span>
+<p class="label-md text-secondary mb-1">FOCUS</p>
+<h3 class="headline-sm font-bold">Core Focus</h3>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-xl transition-all active:scale-95 border-b-4 border-transparent hover:border-primary cursor-pointer group">
+<span class="material-symbols-outlined text-primary mb-3 block" data-icon="bolt">bolt</span>
+<p class="label-md text-secondary mb-1">INTENSITY</p>
+<h3 class="headline-sm font-bold">High (RPE 8)</h3>
+</div>
+</div>
+</section>
+<!-- Conversational Chat Input Bar -->
+<div class="relative mb-16">
+<div class="absolute inset-0 bg-primary/5 blur-3xl rounded-full"></div>
+<div class="relative flex items-center bg-white/70 backdrop-blur-xl border border-outline-variant/20 rounded-full p-2 pl-6 shadow-xl">
+<input class="bg-transparent border-none focus:ring-0 w-full text-on-background placeholder-secondary font-medium" placeholder="Refine your workout (e.g., 'Add a 5min warm-up')..." type="text"/>
+<button class="bg-primary hover:bg-primary-container text-white p-3 rounded-full flex items-center justify-center transition-all active:scale-90">
+<span class="material-symbols-outlined" data-icon="send">send</span>
+</button>
+</div>
+</div>
+<!-- Generated Routine Section (Bento Style) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Main Content: Exercises -->
+<div class="lg:col-span-8 space-y-6">
+<div class="flex items-center justify-between mb-4">
+<h2 class="headline-lg font-black tracking-tighter uppercase">Generated Routine</h2>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-surface-container-high rounded-full text-[10px] font-black tracking-widest uppercase">Precision Tier</span>
+</div>
+</div>
+<!-- Exercise Card 1 -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col md:flex-row h-auto md:h-48 border border-transparent hover:border-primary/20 transition-all">
+<div class="w-full md:w-48 h-48 bg-surface-container overflow-hidden">
+<img alt="Weighted Plank" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Athlete performing a perfect weighted plank on floor" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqTXC9Z4LCZU8ocE2I6RMur36sBJoaK7aSx39c4Tbvgx_qlzGzwY9-ClMaxcS8ZqDM3-JLBJhzWUbaD2U6Zi4G70W1WUqo1L7Y-71vk42U7MoCoewVYcEEI7jKRdE0E9vYj2DtJo9oPi6pGQh5G7F4tN4ETeDlDCrGmQPgt0lkHsB2Gy5yaQ5u8gikMO7M4XEvzN4yyaMicWfIyDmzISNkDyoZVt7Y1rLqX9HjAzOrHJJfWHdHcJ3NEaMsVbyS582JDKT4P5nDR-Ff"/>
+</div>
+<div class="flex-grow p-6 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-xl font-extrabold uppercase tracking-tight">Weighted Plank Reach</h4>
+<span class="text-primary font-bold text-sm">3 Sets</span>
+</div>
+<p class="text-secondary text-sm line-clamp-2">Engage transverse abdominis by reaching forward slowly while maintaining a neutral spine. Control the dumbbell drag.</p>
+</div>
+<div class="flex gap-6 mt-4">
+<div class="flex flex-col">
+<span class="label-md text-secondary font-bold uppercase tracking-widest text-[10px]">REPS</span>
+<span class="text-2xl font-black italic">12 Per Side</span>
+</div>
+<div class="flex flex-col">
+<span class="label-md text-secondary font-bold uppercase tracking-widest text-[10px]">REST</span>
+<span class="text-2xl font-black italic">45s</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Exercise Card 2 -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col md:flex-row h-auto md:h-48 border border-transparent hover:border-primary/20 transition-all">
+<div class="w-full md:w-48 h-48 bg-surface-container overflow-hidden">
+<img alt="Dumbbell Russian Twists" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Muscular athlete doing seated russian twists with dumbbell" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgf5z7VUPTaCJk58s2Ye4m01T6tUPjkjofwaYL7oeSwpIJaXmuaFJhPRRexPJeCg0GCEWDmyCLKi1r_2HR8PvQ869KBXdN96KQFnQoI0RkUWGZfj7gD8WFDlNWaAbI069P1IjO9M7950qk4y4YZZ6nkwCpcxmusHyCOYlz29OJHgzPng-eX0u9vSzN2Ex3M378qOWibVh4Nfgol12FQ2auWL9xaoJNPK5MigBEUr0kEBpucqicd-dpl9YkvazPo1oqCBWF_URlxH2w"/>
+</div>
+<div class="flex-grow p-6 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-xl font-extrabold uppercase tracking-tight">Dynamic Russian Twists</h4>
+<span class="text-primary font-bold text-sm">4 Sets</span>
+</div>
+<p class="text-secondary text-sm line-clamp-2">Focus on the rotation from the ribs, not just moving the arms. Keep heels 2 inches off the ground for constant tension.</p>
+</div>
+<div class="flex gap-6 mt-4">
+<div class="flex flex-col">
+<span class="label-md text-secondary font-bold uppercase tracking-widest text-[10px]">WEIGHT</span>
+<span class="text-2xl font-black italic">15 lbs</span>
+</div>
+<div class="flex flex-col">
+<span class="label-md text-secondary font-bold uppercase tracking-widest text-[10px]">REPS</span>
+<span class="text-2xl font-black italic">20 Total</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Exercise Card 3 -->
+<div class="group relative bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col md:flex-row h-auto md:h-48 border border-transparent hover:border-primary/20 transition-all">
+<div class="w-full md:w-48 h-48 bg-surface-container overflow-hidden">
+<img alt="Leg Raises" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Athlete hanging from pull up bar doing leg raises" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiijEglp5hoChMmxci7r5Ty0ACxQPQIt4vpHaLFUS1ZSMvA32-40n8vQScffu9IwWfl36RCxUlDqOZsF847wQEqhZgWLnP6rAwp1PikorGnfdT_Sliww4eYQAr9yfxLfNn1qXZiFclZ5z-KhVxJ0ma9yxTNSBpJOv1GxQ6892kPnv68Zz4dwMfHXhrjUorCccyG4PFYDrtEv1YCMwtg6UZNohiuFcK9iTKg0tTUL6JNYH1W5QhQPnSwkMapCgB6m2_-o6zB__dEEE2"/>
+</div>
+<div class="flex-grow p-6 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-xl font-extrabold uppercase tracking-tight">L-Sit Compression</h4>
+<span class="text-primary font-bold text-sm">3 Sets</span>
+</div>
+<p class="text-secondary text-sm line-clamp-2">Explosive lift followed by a 3-second negative descent. This targets the lower-abdominal kinetic chain.</p>
+</div>
+<div class="flex gap-6 mt-4">
+<div class="flex flex-col">
+<span class="label-md text-secondary font-bold uppercase tracking-widest text-[10px]">TIME</span>
+<span class="text-2xl font-black italic">30s AMRAP</span>
+</div>
+<div class="flex flex-col">
+<span class="label-md text-secondary font-bold uppercase tracking-widest text-[10px]">INTENSITY</span>
+<span class="text-2xl font-black italic">MAX</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar: Performance Insights -->
+<div class="lg:col-span-4 space-y-6">
+<!-- AI Persona Message -->
+<div class="bg-inverse-surface text-inverse-on-surface p-6 rounded-xl relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/20 rounded-full blur-3xl -mr-16 -mt-16"></div>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="auto_awesome">auto_awesome</span>
+<span class="text-[10px] font-black uppercase tracking-widest">Kinetic Coach Insight</span>
+</div>
+<p class="text-lg font-medium leading-relaxed italic">
+                        "Your core is the bridge between power and stability. Today's RPE 8 intensity will force neural adaptation. Don't sacrifice form for speed."
+                    </p>
+</div>
+<!-- Session Stats -->
+<div class="bg-surface-container p-6 rounded-xl border border-outline-variant/10">
+<h5 class="label-md text-secondary font-black tracking-widest uppercase mb-6">Projected Load</h5>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between items-end mb-2">
+<span class="text-sm font-bold uppercase tracking-tight">Neural Fatigue</span>
+<span class="text-primary font-black italic">65%</span>
+</div>
+<div class="h-3 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 65%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-end mb-2">
+<span class="text-sm font-bold uppercase tracking-tight">Metabolic Stress</span>
+<span class="text-primary font-black italic">82%</span>
+</div>
+<div class="h-3 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 82%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- CTA Button -->
+<button class="w-full bg-gradient-to-r from-primary to-primary-container text-white py-6 rounded-xl font-black italic uppercase tracking-widest flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-all">
+                    Initiate Session
+                    <span class="material-symbols-outlined" data-icon="play_arrow">play_arrow</span>
+</button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg border-t border-slate-100 dark:border-slate-800 pb-safe shadow-[0_-4px_24px_rgba(0,0,0,0.04)]">
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 hover:text-[#FC5200] transition-colors active:scale-90 duration-150">
+<span class="material-symbols-outlined text-2xl" data-icon="home">home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#FC5200] scale-110 transition-transform active:scale-90 duration-150">
+<span class="material-symbols-outlined text-2xl" data-icon="smart_toy" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 hover:text-[#FC5200] transition-colors active:scale-90 duration-150">
+<span class="material-symbols-outlined text-2xl" data-icon="insert_chart">insert_chart</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 hover:text-[#FC5200] transition-colors active:scale-90 duration-150">
+<span class="material-symbols-outlined text-2xl" data-icon="person">person</span>
+</div>
+</nav>
+</body></html>

@@ -132,7 +132,7 @@ export const EXERCISES: ExerciseDef[] = [
 
       // Hysteresis: enter down at <90, exit down at >110; enter up at >160, exit up at <145
       let position: ExercisePosition = 'middle';
-      if (kneeAngle < 90) position = 'down';
+      if (kneeAngle < 80) position = 'down';
       else if (kneeAngle > 160) position = 'up';
 
       const form: FormQuality = hipAngle > 60 ? 'good' : 'bad';

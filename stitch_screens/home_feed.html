@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kinetic | AI Fitness Trainer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "on-background": "#101d25",
+                "inverse-on-surface": "#e5f2fe",
+                "inverse-primary": "#ffb59d",
+                "outline-variant": "#e5beb2",
+                "surface-container-highest": "#d7e4f0",
+                "surface": "#f5faff",
+                "inverse-surface": "#25323b",
+                "primary-container": "#d14300",
+                "surface-bright": "#f5faff",
+                "background": "#f5faff",
+                "on-secondary-container": "#636262",
+                "tertiary-container": "#697680",
+                "on-primary-fixed-variant": "#832700",
+                "surface-dim": "#cedce7",
+                "error": "#ba1a1a",
+                "on-surface": "#101d25",
+                "outline": "#907065",
+                "surface-variant": "#d7e4f0",
+                "surface-tint": "#ab3500",
+                "on-error-container": "#93000a",
+                "on-secondary": "#ffffff",
+                "on-primary-fixed": "#390c00",
+                "secondary": "#5f5e5e",
+                "on-tertiary": "#ffffff",
+                "on-tertiary-container": "#fcfcff",
+                "on-primary-container": "#fffbff",
+                "secondary-fixed": "#e5e2e1",
+                "primary": "#a73400",
+                "primary-fixed-dim": "#ffb59d",
+                "surface-container-high": "#dceaf5",
+                "surface-container-lowest": "#ffffff",
+                "primary-fixed": "#ffdbd0",
+                "secondary-fixed-dim": "#c8c6c5",
+                "on-secondary-fixed-variant": "#474746",
+                "error-container": "#ffdad6",
+                "tertiary": "#515e67",
+                "on-primary": "#ffffff",
+                "on-tertiary-fixed-variant": "#3c4852",
+                "surface-container-low": "#eaf5ff",
+                "surface-container": "#e2f0fb",
+                "tertiary-fixed": "#d7e4f0",
+                "on-tertiary-fixed": "#101d25",
+                "secondary-container": "#e2dfde",
+                "on-surface-variant": "#5c4037",
+                "on-error": "#ffffff",
+                "on-secondary-fixed": "#1b1b1c",
+                "tertiary-fixed-dim": "#bbc8d3"
+              },
+              fontFamily: {
+                "headline": ["Inter"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm dark:shadow-none flex items-center justify-between px-6 h-16 w-full">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="User professional athletic profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXB5aBgP2yZ67c1MZqraZ2EJYa5axJ9LJ719r2locSqLh8AZSIaeDTLq-H8jBMxCDe8ZaDQI0W0nL4ih5UiPKNaTqvZgf-zIVMveRZxIyk85XtUneesym9nlsyoOWLbIviB3pFajNYjMPPYBXidd9mAAVFMcFmchilMgeJ88S-EYfcHU0WY5m0MWe-cXIYP-WtOTxDvHX2zdKiJGakH7bWUCBhbyRNwPxrkbcHhuUXVNC9y6Vwd44T4VbsdHXcUZTwExI-eFv7V1jo"/>
+</div>
+<span class="text-xl font-black italic tracking-tighter text-slate-900 dark:text-white">KINETIC</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1 bg-surface-container-low px-2 py-1 rounded-xl">
+<span class="material-symbols-outlined text-[#FC5200] text-lg" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="font-bold text-xs">12</span>
+</div>
+<span class="material-symbols-outlined text-slate-500 hover:opacity-80 transition-opacity active:scale-95 duration-200">notifications</span>
+</div>
+</header>
+<main class="pt-20 px-6 max-w-2xl mx-auto">
+<!-- Calendar Strip -->
+<section class="mb-8">
+<div class="flex items-center justify-between mb-4">
+<h2 class="font-label text-xs font-bold uppercase tracking-widest text-secondary">October 2023</h2>
+<span class="material-symbols-outlined text-sm text-secondary">calendar_today</span>
+</div>
+<div class="flex gap-4 overflow-x-auto hide-scrollbar py-2">
+<div class="flex-shrink-0 flex flex-col items-center justify-center w-12 h-16 rounded-xl bg-surface-container-lowest shadow-sm">
+<span class="text-[10px] font-bold text-secondary uppercase">Mon</span>
+<span class="text-lg font-bold">16</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center justify-center w-12 h-16 rounded-xl bg-surface-container-lowest shadow-sm">
+<span class="text-[10px] font-bold text-secondary uppercase">Tue</span>
+<span class="text-lg font-bold">17</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center justify-center w-14 h-20 -mt-2 rounded-xl bg-primary text-white shadow-lg shadow-primary/20 scale-105">
+<span class="text-[10px] font-bold uppercase opacity-80">Wed</span>
+<span class="text-xl font-black">18</span>
+<div class="w-1 h-1 bg-white rounded-full mt-1"></div>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center justify-center w-12 h-16 rounded-xl bg-surface-container-lowest shadow-sm">
+<span class="text-[10px] font-bold text-secondary uppercase">Thu</span>
+<span class="text-lg font-bold">19</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center justify-center w-12 h-16 rounded-xl bg-surface-container-lowest shadow-sm">
+<span class="text-[10px] font-bold text-secondary uppercase">Fri</span>
+<span class="text-lg font-bold">20</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center justify-center w-12 h-16 rounded-xl bg-surface-container-lowest shadow-sm">
+<span class="text-[10px] font-bold text-secondary uppercase">Sat</span>
+<span class="text-lg font-bold">21</span>
+</div>
+<div class="flex-shrink-0 flex flex-col items-center justify-center w-12 h-16 rounded-xl bg-surface-container-lowest shadow-sm">
+<span class="text-[10px] font-bold text-secondary uppercase">Sun</span>
+<span class="text-lg font-bold">22</span>
+</div>
+</div>
+</section>
+<!-- Today's Focus Card -->
+<section class="mb-10">
+<label class="block font-label text-[10px] font-bold uppercase tracking-[0.2em] text-secondary mb-3">Today's Focus</label>
+<div class="relative overflow-hidden rounded-xl bg-inverse-surface text-white p-8 group">
+<!-- Background visual element -->
+<div class="absolute -right-8 -bottom-8 w-48 h-48 bg-primary/20 rounded-full blur-3xl group-hover:bg-primary/30 transition-colors"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-primary px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-tighter">AI Optimized</span>
+<span class="text-surface-variant/60 text-[10px] font-bold uppercase">65 Min • High Intensity</span>
+</div>
+<h1 class="text-4xl font-black leading-none tracking-tighter mb-6 uppercase italic">Upper Body<br/>Hypertrophy</h1>
+<div class="flex items-end justify-between">
+<div class="flex -space-x-2">
+<div class="w-8 h-8 rounded-full border-2 border-inverse-surface bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Muscle diagram highlighting chest and triceps" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzmDbszDIrG24QFnHEU4Hu7enQsqq-5nR6C8g-a7PJ0vg6YwWiXY2GLvNxXkrlHA6LkzINhv0Esz1U5vO0kn66XV_nBWx2UDHRRuwSoO9AppO0R3O6ZamKzZyhiysJdM6Oje70lx-beNVS6UU1BG3zqUKW2Vpd3c1bQ_zvg0x9OpwU2eTZF1BgkKa4BSpaAEhEkzf2DaKbXXw7Y31bTyjdJgBQn1ybNwtNs6gzGld2nt2OfV4H-rtJRJhnu2FfDqLreAZxHUlvVTXT"/>
+</div>
+<div class="w-8 h-8 rounded-full border-2 border-inverse-surface bg-surface-container-highest flex items-center justify-center">
+<span class="text-[10px] font-bold text-on-surface">+3</span>
+</div>
+</div>
+<button class="bg-gradient-to-r from-primary to-primary-container px-6 py-3 rounded-xl font-black uppercase text-xs tracking-widest shadow-xl shadow-primary/20 active:scale-95 transition-transform">
+                            Start Workout
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Upcoming Feed -->
+<section class="mb-12">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline font-extrabold text-xl tracking-tight">Upcoming Schedule</h3>
+<button class="text-primary font-bold text-xs uppercase tracking-tighter">View All</button>
+</div>
+<div class="space-y-8 relative">
+<!-- Vertical Timeline Line -->
+<div class="absolute left-3 top-2 bottom-2 w-px bg-surface-container-highest"></div>
+<!-- Feed Item 1 -->
+<div class="relative pl-10 flex flex-col gap-1">
+<div class="absolute left-2 top-2 w-2 h-2 rounded-full bg-primary ring-4 ring-surface"></div>
+<span class="font-label text-[10px] font-black text-secondary uppercase tracking-widest">Tomorrow • 08:00 AM</span>
+<div class="bg-surface-container-low rounded-xl p-5 hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-headline font-bold text-lg leading-tight mb-1">Metabolic Conditioning</h4>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-secondary">timer</span>
+<span class="text-[11px] font-bold text-secondary">45M</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-secondary">bolt</span>
+<span class="text-[11px] font-bold text-secondary">Extreme</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary group-hover:translate-x-1 transition-transform">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Feed Item 2 -->
+<div class="relative pl-10 flex flex-col gap-1">
+<div class="absolute left-2 top-2 w-2 h-2 rounded-full bg-surface-container-highest ring-4 ring-surface"></div>
+<span class="font-label text-[10px] font-black text-secondary uppercase tracking-widest">Friday • 07:30 AM</span>
+<div class="bg-surface-container-low rounded-xl p-5 hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-headline font-bold text-lg leading-tight mb-1">Posterior Chain Focus</h4>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-secondary">timer</span>
+<span class="text-[11px] font-bold text-secondary">55M</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-secondary">fitness_center</span>
+<span class="text-[11px] font-bold text-secondary">Medium</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary group-hover:translate-x-1 transition-transform">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Feed Item 3 -->
+<div class="relative pl-10 flex flex-col gap-1">
+<div class="absolute left-2 top-2 w-2 h-2 rounded-full bg-surface-container-highest ring-4 ring-surface"></div>
+<span class="font-label text-[10px] font-black text-secondary uppercase tracking-widest">Saturday • 10:00 AM</span>
+<div class="bg-surface-container-low rounded-xl p-5 hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-headline font-bold text-lg leading-tight mb-1">Active Recovery &amp; Flow</h4>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-secondary">timer</span>
+<span class="text-[11px] font-bold text-secondary">30M</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm text-secondary">self_improvement</span>
+<span class="text-[11px] font-bold text-secondary">Low</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-secondary group-hover:translate-x-1 transition-transform">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Stats Preview -->
+<section class="mb-12 grid grid-cols-2 gap-4">
+<div class="bg-white p-5 rounded-xl shadow-sm">
+<span class="block font-label text-[10px] font-bold uppercase tracking-widest text-secondary mb-2">Weekly Volume</span>
+<span class="text-3xl font-black tracking-tighter">12.4<span class="text-sm font-bold text-secondary ml-1 italic">tons</span></span>
+<div class="mt-2 text-[10px] font-bold text-primary flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">trending_up</span> +12% vs last week
+                </div>
+</div>
+<div class="bg-white p-5 rounded-xl shadow-sm">
+<span class="block font-label text-[10px] font-bold uppercase tracking-widest text-secondary mb-2">Avg. Intensity</span>
+<span class="text-3xl font-black tracking-tighter">84<span class="text-sm font-bold text-secondary ml-1 italic">%</span></span>
+<div class="mt-2 text-[10px] font-bold text-tertiary flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">horizontal_rule</span> Steady pace
+                </div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 bg-white/80 dark:bg-slate-950/80 backdrop-blur-lg shadow-[0_-4px_24px_rgba(0,0,0,0.04)] border-t border-slate-100 dark:border-slate-800 pb-safe">
+<a class="flex flex-col items-center justify-center text-[#FC5200] scale-110 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-inter text-[10px] uppercase tracking-widest font-bold mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 hover:text-[#FC5200] transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="font-inter text-[10px] uppercase tracking-widest font-bold mt-1">Coach</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 hover:text-[#FC5200] transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">insert_chart</span>
+<span class="font-inter text-[10px] uppercase tracking-widest font-bold mt-1">Stats</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-600 hover:text-[#FC5200] transition-colors active:scale-90 duration-150" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-inter text-[10px] uppercase tracking-widest font-bold mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

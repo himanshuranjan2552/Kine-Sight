@@ -11,6 +11,81 @@
   <title>Kine-Sight AI Fitness Trainer</title>
   <link rel="icon" type="image/svg+xml" href="/icon.svg" />
   <link rel="apple-touch-icon" href="/icon.svg" />
+
+  <!-- TAILWIND & GOOGLE FONTS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-background": "#101d25",
+            "inverse-on-surface": "#e5f2fe",
+            "inverse-primary": "#ffb59d",
+            "outline-variant": "#e5beb2",
+            "surface-container-highest": "#d7e4f0",
+            "surface": "#f5faff",
+            "inverse-surface": "#25323b",
+            "primary-container": "#d14300",
+            "surface-bright": "#f5faff",
+            "background": "#f5faff",
+            "on-secondary-container": "#636262",
+            "tertiary-container": "#697680",
+            "on-primary-fixed-variant": "#832700",
+            "surface-dim": "#cedce7",
+            "error": "#ba1a1a",
+            "on-surface": "#101d25",
+            "outline": "#907065",
+            "surface-variant": "#d7e4f0",
+            "surface-tint": "#ab3500",
+            "on-error-container": "#93000a",
+            "on-secondary": "#ffffff",
+            "on-primary-fixed": "#390c00",
+            "secondary": "#5f5e5e",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-container": "#fcfcff",
+            "on-primary-container": "#fffbff",
+            "secondary-fixed": "#e5e2e1",
+            "primary": "#a73400",
+            "primary-fixed-dim": "#ffb59d",
+            "surface-container-high": "#dceaf5",
+            "surface-container-lowest": "#ffffff",
+            "primary-fixed": "#ffdbd0",
+            "secondary-fixed-dim": "#c8c6c5",
+            "on-secondary-fixed-variant": "#474746",
+            "error-container": "#ffdad6",
+            "tertiary": "#515e67",
+            "on-primary": "#ffffff",
+            "on-tertiary-fixed-variant": "#3c4852",
+            "surface-container-low": "#eaf5ff",
+            "surface-container": "#e2f0fb",
+            "tertiary-fixed": "#d7e4f0",
+            "on-tertiary-fixed": "#101d25",
+            "secondary-container": "#e2dfde",
+            "on-surface-variant": "#5c4037",
+            "on-error": "#ffffff",
+            "on-secondary-fixed": "#1b1b1c",
+            "tertiary-fixed-dim": "#bbc8d3"
+          },
+          fontFamily: {
+            "headline": ["Inter"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+        },
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 </head>
 <body>
   <div id="root"></div>
