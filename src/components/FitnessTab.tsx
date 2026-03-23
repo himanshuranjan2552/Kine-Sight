@@ -521,7 +521,7 @@ export function FitnessTab() {
         {/* TopAppBar Shell */}
         <header className="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm dark:shadow-none h-16 px-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-xl font-black italic tracking-tighter text-slate-900 dark:text-white">KINETIC</span>
+            <span className="text-xl font-black italic tracking-tighter text-slate-900 dark:text-white">KINESIGHT</span>
           </div>
           <div className="flex items-center gap-4">
             <span className="material-symbols-outlined text-[#FC5200] text-2xl" data-icon="local_fire_department">local_fire_department</span>
@@ -539,7 +539,7 @@ export function FitnessTab() {
               Let's calibrate your <span className="text-primary italic">next move.</span>
             </h1>
             <p className="text-secondary body-md max-w-lg">
-              I'm your Kinetic AI. Tell me your constraints, and I'll generate a precision-engineered routine for maximum athletic output.
+              I'm your KineSight AI. Tell me your constraints, and I'll generate a precision-engineered routine for maximum athletic output.
             </p>
           </section>
 
@@ -598,7 +598,7 @@ export function FitnessTab() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary-container/20 rounded-full blur-3xl -mr-16 -mt-16"></div>
                 <div className="flex items-center gap-2 mb-4">
                   <span className="material-symbols-outlined text-primary text-xl" data-icon="auto_awesome">auto_awesome</span>
-                  <span className="text-[10px] font-black uppercase tracking-widest">Kinetic Coach Insight</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest">KineSight Coach Insight</span>
                 </div>
                 <p className="text-lg font-medium leading-relaxed italic z-10 relative">
                   "Your form is the bridge between power and stability. The AI will guide you to perfection."
@@ -620,7 +620,7 @@ export function FitnessTab() {
       <header className="fixed top-0 w-full z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl shadow-sm dark:shadow-none">
         <div className="flex items-center justify-between px-6 h-16 w-full">
           <div className="flex items-center gap-3">
-            <span className="text-xl font-black italic tracking-tighter text-slate-900 dark:text-white">KINETIC</span>
+            <span className="text-xl font-black italic tracking-tighter text-slate-900 dark:text-white">KINESIGHT</span>
           </div>
           <div className="flex items-center gap-4">
             <span className="font-bold text-sm uppercase tracking-widest">{selectedExercise.name}</span>
