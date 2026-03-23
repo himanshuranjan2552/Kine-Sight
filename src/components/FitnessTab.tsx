@@ -543,31 +543,7 @@ export function FitnessTab() {
             </p>
           </section>
 
-          {/* Dynamic Constraint Toggles */}
-          <section className="mb-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-surface-container-lowest p-5 rounded-xl transition-all active:scale-95 border-b-4 border-transparent hover:border-primary cursor-pointer group">
-                <span className="material-symbols-outlined text-primary mb-3 block" data-icon="schedule">schedule</span>
-                <p className="label-md text-secondary mb-1">DURATION</p>
-                <h3 className="headline-sm font-bold">30 mins</h3>
-              </div>
-              <div className="bg-surface-container-lowest p-5 rounded-xl transition-all active:scale-95 border-b-4 border-transparent hover:border-primary cursor-pointer group">
-                <span className="material-symbols-outlined text-primary mb-3 block" data-icon="fitness_center">fitness_center</span>
-                <p className="label-md text-secondary mb-1">EQUIPMENT</p>
-                <h3 className="headline-sm font-bold">Dumbbells</h3>
-              </div>
-              <div className="bg-surface-container-lowest p-5 rounded-xl transition-all active:scale-95 border-b-4 border-primary cursor-pointer group">
-                <span className="material-symbols-outlined text-primary mb-3 block" data-icon="target">target</span>
-                <p className="label-md text-secondary mb-1">FOCUS</p>
-                <h3 className="headline-sm font-bold">Core Focus</h3>
-              </div>
-              <div className="bg-surface-container-lowest p-5 rounded-xl transition-all active:scale-95 border-b-4 border-transparent hover:border-primary cursor-pointer group">
-                <span className="material-symbols-outlined text-primary mb-3 block" data-icon="bolt">bolt</span>
-                <p className="label-md text-secondary mb-1">INTENSITY</p>
-                <h3 className="headline-sm font-bold">High (RPE 8)</h3>
-              </div>
-            </div>
-          </section>
+
 
           {/* Generated Routine Section (Bento Style) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -763,7 +739,7 @@ export function FitnessTab() {
                   <span className="text-xl lg:text-2xl font-black italic text-on-background">{stats.correctReps}</span>
                 </div>
                 <div className="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden">
-                  <div className="h-full bg-primary-container transition-all duration-300" style={{ width: `${totalReps > 0 ? (stats.correctReps / totalReps) * 100 : 0}%` }}></div>
+                  <div className="h-full bg-green-500 transition-all duration-300" style={{ width: `${totalReps > 0 ? (stats.correctReps / totalReps) * 100 : 0}%` }}></div>
                 </div>
               </div>
               <div className="flex-grow flex flex-col gap-2">
@@ -772,7 +748,7 @@ export function FitnessTab() {
                   <span className="text-xl lg:text-2xl font-black italic text-secondary">{stats.incorrectReps}</span>
                 </div>
                 <div className="h-3 w-full bg-surface-container-highest rounded-full overflow-hidden">
-                  <div className="h-full bg-orange-300 transition-all duration-300" style={{ width: `${totalReps > 0 ? (stats.incorrectReps / totalReps) * 100 : 0}%` }}></div>
+                  <div className="h-full bg-red-500 transition-all duration-300" style={{ width: `${totalReps > 0 ? (stats.incorrectReps / totalReps) * 100 : 0}%` }}></div>
                 </div>
               </div>
             </div>
