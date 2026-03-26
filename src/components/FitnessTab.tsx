@@ -26,16 +26,19 @@ function playCorrectBeep() {
     const gain = audioCtx.createGain();
     
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.1);
+    // Success "ding" sound (B5 followed by E6)
+    osc.frequency.setValueAtTime(987.77, audioCtx.currentTime);
+    osc.frequency.setValueAtTime(1318.51, audioCtx.currentTime + 0.1);
     
-    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    // Quick volume attack and smooth fade out
+    gain.gain.setValueAtTime(0, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
     
     osc.connect(gain);
     gain.connect(audioCtx.destination);
     osc.start();
-    osc.stop(audioCtx.currentTime + 0.1);
+    osc.stop(audioCtx.currentTime + 0.4);
   } catch (err) {
     console.warn('Audio beep failed', err);
   }
@@ -45,7 +48,7 @@ function playCorrectBeep() {
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
-const CANVAS_FPS = 30;
+const CANVAS_FPS = 60; // Target FPS for pose detection and canvas drawing
 /** Number of consecutive frames required to confirm a position change */
 const DEBOUNCE_FRAMES = 5;
 /** Countdown duration in seconds before workout starts */
