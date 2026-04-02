@@ -1,6 +1,8 @@
 # 🏋️‍♂️ Kine-Sight: Your AI-Powered Digital Fitness Trainer
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-kine--sight.vercel.app-blue?style=for-the-badge)](https://kine-sight.vercel.app)
+[![YouTube Demo](https://img.shields.io/badge/YouTube-Watch_Demo-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=egs9YfF6UwM)
+
 
 **Kine-Sight** is a cutting-edge digital fitness trainer with an "eye." By leveraging on-device Vision-Language Models (VLMs), it watches your form, tracks your progress, catches your mistakes, and provides real-time, actionable feedback to help you perfect your fitness journey. 
 
@@ -14,7 +16,6 @@ Everything runs **100% locally in your browser** via WebAssembly—meaning zero 
 - **⚡ Blazing Fast On-Device AI:** Utilizes optimized WASM engines to run Vision (LFM2-VL) and Text (LFM2) models directly in the web browser.
 - **🎙️ Voice Integration:** Speak to your AI trainer naturally, and it will respond via text-to-speech.
 
-[![YouTube Demo](https://img.shields.io/badge/YouTube-Watch_Demo-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=egs9YfF6UwM)
 
 ## 🛠️ Tech Stack
 
