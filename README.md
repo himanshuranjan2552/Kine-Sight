@@ -14,6 +14,7 @@ Everything runs **100% locally in your browser** via WebAssembly—meaning zero 
 - **⚡ Blazing Fast On-Device AI:** Utilizes optimized WASM engines to run Vision (LFM2-VL) and Text (LFM2) models directly in the web browser.
 - **🎙️ Voice Integration:** Speak to your AI trainer naturally, and it will respond via text-to-speech.
 
+[![YouTube Demo](https://img.shields.io/badge/YouTube-Watch_Demo-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=egs9YfF6UwM)
 
 ## 🛠️ Tech Stack
 
