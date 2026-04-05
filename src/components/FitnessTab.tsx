@@ -105,6 +105,20 @@ interface SessionStats {
 }
 
 // ---------------------------------------------------------------------------
+// Constant Motivational Messages
+// ---------------------------------------------------------------------------
+const MOTIVATIONAL_MESSAGES = [
+  "Great job, keep it up!",
+  "Perfect form!",
+  "You're doing amazing!",
+  "Spot on!",
+  "Excellent movement!",
+  "Looking strong!",
+  "Keep that pace!",
+  "Flawless execution!"
+];
+
+// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenReports?: () => void; theme?: 'light' | 'dark'; onToggleTheme?: () => void }) {
@@ -146,6 +160,7 @@ export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenRepo
   // Stats / Streak
   const [currentPerfectReps, setCurrentPerfectReps] = useState(0);
   const [ttsEnabled, setTtsEnabled] = useState(ttsService.isEnabled());
+  const [showSkeleton, setShowSkeleton] = useState(true);
 
   // Plank-specific
   const [plankHoldTime, setPlankHoldTime] = useState(0);
@@ -180,8 +195,10 @@ export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenRepo
 
   // Countdown masking ref
   const isCountdownRef = useRef<boolean>(false);
+  const showSkeletonRef = useRef<boolean>(true);
 
   // Keep refs in sync
+  showSkeletonRef.current = showSkeleton;
   phaseRef.current = phase;
   isWorkoutRef.current = isWorkout;
   exerciseRef.current = selectedExercise;
@@ -302,31 +319,33 @@ export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenRepo
         const analysis: PoseAnalysis = exercise.analyze(landmarks);
 
         // Draw skeleton with mirrored landmarks AND filter
-        const formColor =
-          analysis.form === "good"
-            ? "#22C55E"
-            : analysis.form === "bad"
-              ? "#EF4444"
-              : "#F59E0B";
-        drawSkeleton(
-          ctx,
-          mirroredLandmarks,
-          canvas.width,
-          canvas.height,
-          formColor,
-          exercise.keyLandmarks,
-        );
-
-        // Draw angle badge on the relevant joint (mirrored)
-        const angleLandmarkIndex = getAngleLandmarkIndex(exercise.id);
-        if (angleLandmarkIndex >= 0) {
-          drawAngleBadge(
+        if (showSkeletonRef.current) {
+          const formColor =
+            analysis.form === "good"
+              ? "#22C55E"
+              : analysis.form === "bad"
+                ? "#EF4444"
+                : "#F59E0B";
+          drawSkeleton(
             ctx,
-            analysis.angle,
-            mirroredLandmarks[angleLandmarkIndex],
+            mirroredLandmarks,
             canvas.width,
             canvas.height,
+            formColor,
+            exercise.keyLandmarks,
           );
+
+          // Draw angle badge on the relevant joint (mirrored)
+          const angleLandmarkIndex = getAngleLandmarkIndex(exercise.id);
+          if (angleLandmarkIndex >= 0) {
+            drawAngleBadge(
+              ctx,
+              analysis.angle,
+              mirroredLandmarks[angleLandmarkIndex],
+              canvas.width,
+              canvas.height,
+            );
+          }
         }
 
         // Update UI state
@@ -447,24 +466,32 @@ export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenRepo
 
               // Trigger AI Coach response
               if (llmService.isReady()) {
+                const repNumber = newStats.correctReps + newStats.incorrectReps;
                 const context = {
-                  repNumber: newStats.correctReps + newStats.incorrectReps,
+                  repNumber,
                   formDetails: analysis.formDetails || [],
                   formHistory: newStats.formHistory.slice(-3),
                 };
-                const action = isCorrect
-                  ? "User completed a perfect rep."
-                  : "User completed a rep with poor form.";
-                llmService.generateFeedback(
-                  exercise.name,
-                  action,
-                  context,
-                  (text) => {
-                    setCoachText(text);
-                  }
-                ).then(finalCoachText => {
-                   if (finalCoachText) ttsService.speak(finalCoachText);
-                });
+                
+                if (!isCorrect || (isCorrect && repNumber % 10 === 0)) {
+                  const action = isCorrect
+                    ? "User completed a perfect milestone."
+                    : "User completed a rep with poor form.";
+                  llmService.generateFeedback(
+                    exercise.name,
+                    action,
+                    context,
+                    (text) => {
+                      setCoachText(text);
+                    }
+                  ).then(finalCoachText => {
+                     if (finalCoachText) ttsService.speak(finalCoachText);
+                  });
+                } else {
+                  const randomMsg = MOTIVATIONAL_MESSAGES[Math.floor(Math.random() * MOTIVATIONAL_MESSAGES.length)];
+                  setCoachText(randomMsg);
+                  // TTS is intentionally omitted here so it only speaks on mistakes and milestones
+                }
               }
 
               formDuringRepRef.current = true;
@@ -871,9 +898,9 @@ export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenRepo
       </header>
 
       {/* Main Content Canvas */}
-      <main className="flex-grow flex flex-col pt-16 h-full overflow-hidden">
+      <main className="flex-grow flex flex-col md:flex-row pt-16 h-full overflow-hidden">
         {/* Camera Viewport & AI Overlay */}
-        <section className="relative flex-grow bg-inverse-surface border-b border-outline-variant/20 overflow-hidden flex items-center justify-center">
+        <section className="relative flex-grow basis-full md:basis-[65%] shrink-0 bg-inverse-surface border-b md:border-b-0 md:border-r border-outline-variant/20 overflow-hidden flex items-center justify-center">
           <div className="absolute inset-0 z-0">
             {/* Hidden video element — MediaPipe reads from this */}
             <video
@@ -918,28 +945,6 @@ export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenRepo
             </div>
           )}
 
-          {/* Coach LLM Feedback */}
-          {coachText && !isCountdownRef.current && (
-            <div className="absolute top-24 left-1/2 -translate-x-1/2 z-30 w-[90%] max-w-lg transition-all duration-300">
-              <div className="bg-surface-container-highest/90 backdrop-blur-xl border border-primary/30 p-4 rounded-2xl shadow-2xl flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <span
-                    className="material-symbols-outlined text-primary text-xl"
-                    data-icon="smart_toy"
-                  >
-                    smart_toy
-                  </span>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-primary">
-                    AI Coach Feed
-                  </span>
-                </div>
-                <p className="text-on-surface font-medium leading-tight">
-                  {coachText}
-                </p>
-              </div>
-            </div>
-          )}
-
           {/* Dynamic Feedback Banner */}
           {feedback && !isCountdownRef.current && (
             <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 w-[90%] max-w-md">
@@ -966,14 +971,29 @@ export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenRepo
           )}
 
           {/* Corner Context Tags */}
-          <div className="absolute bottom-6 right-6 z-20 flex flex-col gap-2 border border-white/10 rounded-lg p-2 bg-black/40 backdrop-blur-md">
-            <div className="flex items-center gap-2">
-              <p className="text-[10px] text-white/70 uppercase font-bold tracking-widest">
-                Angle
-              </p>
-              <p className="text-white font-black italic text-lg">
-                {currentAngle}°
-              </p>
+          <div className="absolute bottom-6 right-6 flex flex-col gap-3 z-20">
+            <button
+              onClick={() => {
+                const next = !showSkeleton;
+                setShowSkeleton(next);
+                showSkeletonRef.current = next;
+              }}
+              className="flex items-center justify-center gap-2 border border-white/10 rounded-lg px-3 py-2 bg-black/40 backdrop-blur-md hover:bg-black/60 transition-colors text-white"
+              title={showSkeleton ? "Hide Skeleton" : "Show Skeleton"}
+            >
+              <span className="material-symbols-outlined text-lg" data-icon={showSkeleton ? "visibility" : "visibility_off"}>
+                {showSkeleton ? "visibility" : "visibility_off"}
+              </span>
+            </button>
+            <div className="flex flex-col gap-2 border border-white/10 rounded-lg p-2 bg-black/40 backdrop-blur-md">
+              <div className="flex items-center gap-2">
+                <p className="text-[10px] text-white/70 uppercase font-bold tracking-widest">
+                  Angle
+                </p>
+                <p className="text-white font-black italic text-lg">
+                  {currentAngle}°
+                </p>
+              </div>
             </div>
           </div>
 
@@ -986,12 +1006,37 @@ export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenRepo
           </div>
         </section>
 
-        {/* Metrics Section (Asymmetric Bento Grid) */}
-        <section className="bg-surface px-6 py-6 grid grid-cols-2 md:grid-cols-4 gap-4 z-30 shrink-0">
-          {/* Time Elapsed */}
-          <div className="col-span-1 bg-surface-container-lowest p-4 rounded-xl flex flex-col justify-between shadow-sm">
-            <label className="text-[0.75rem] font-bold uppercase tracking-widest text-secondary mb-2">
-              Duration
+        {/* Right Panel: Coach & Metrics */}
+        <section className="bg-surface px-6 py-6 md:py-8 flex flex-col basis-auto md:basis-[35%] shrink z-30 overflow-y-auto w-full gap-4 relative">
+          
+          {/* Coach LLM Feedback (Desktop Panel / Mobile inline) */}
+          {coachText && !isCountdownRef.current && (
+            <div className="w-full transition-all duration-300">
+              <div className="bg-surface-container-highest/90 border border-primary/30 p-4 rounded-2xl shadow-sm flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="material-symbols-outlined text-primary text-xl"
+                    data-icon="smart_toy"
+                  >
+                    smart_toy
+                  </span>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+                    AI Coach Feed
+                  </span>
+                </div>
+                <p className="text-on-surface font-medium leading-tight">
+                  {coachText}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Metrics Section */}
+          <div className="grid grid-cols-2 gap-4 w-full">
+            {/* Time Elapsed */}
+            <div className="col-span-1 bg-surface-container-lowest p-4 rounded-xl flex flex-col justify-between shadow-sm">
+              <label className="text-[0.75rem] font-bold uppercase tracking-widest text-secondary mb-2">
+                Duration
             </label>
             <div className="flex items-baseline gap-1">
               <span className="text-3xl lg:text-4xl font-black italic tracking-tighter">
@@ -1094,7 +1139,7 @@ export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenRepo
           </div>
 
           {/* Controls (Action Bar) */}
-          <div className="col-span-2 md:col-span-4 flex gap-4 mt-2">
+          <div className="col-span-2 flex gap-4 mt-2 w-full pb-8 md:pb-0">
             <button
               onClick={resetSession}
               className="flex-1 bg-surface-container-highest h-14 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-all text-on-surface hover:bg-surface-variant shadow-sm border border-outline-variant/30"
@@ -1140,6 +1185,7 @@ export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenRepo
                 </span>
               </button>
             )}
+          </div>
           </div>
         </section>
       </main>

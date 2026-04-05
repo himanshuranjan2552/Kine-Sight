@@ -1,7 +1,7 @@
 import { CreateWebWorkerMLCEngine, WebWorkerMLCEngine, InitProgressReport } from '@mlc-ai/web-llm';
 import type { FormQuality } from '../fitness/poseEngine';
 
-export const SYSTEM_PROMPT = "You are KineSight, a calm, motivating, and highly precise AI fitness coach. Based on the user's exercise data and form details, provide exactly ONE short, punchy sentence to guide or motivate them. No lists, no markdown.";
+export const SYSTEM_PROMPT = "You are an AI fitness coach. When the user makes a mistake, explain EXACTLY what body part is misaligned and give ONE clear corrective cue. When motivating, be energetic and specific to their progress. Never use markdown, lists, or emojis. Keep it to ONE short sentence.";
 
 // Qwen2.5-1.5B — verified to exist in @mlc-ai/web-llm v0.2.82 registry
 const MODEL_ID = "Qwen2.5-1.5B-Instruct-q4f16_1-MLC";
@@ -51,7 +51,7 @@ class LLMEngineWrapper {
 
     this.generating = true;
 
-    const prompt = `Action: ${action}\nExercise: ${exercise}\nData: ${JSON.stringify(context)}\nKeep your response to a single, short, punchy sentence. No markdown.`;
+    const prompt = `Exercise: ${exercise}\nAction: ${action}\nForm Mistakes: ${context.formDetails?.length ? context.formDetails.join(', ') : 'None'}\nRep Number: ${context.repNumber}\nProvide your ONE sentence response without any markdown.`;
 
     const messages = [
       { role: "system" as const, content: SYSTEM_PROMPT },
