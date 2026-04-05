@@ -1,119 +1,371 @@
-/* Stick Figure Animations for Exercise Demo */
+/* Step-by-Step Exercise Animation Styles */
 
 .exercise-demo {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  gap: 1rem;
   color: var(--primary);
-  /* Use a nice timing function for all exercise motions */
-  --motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: var(--font-family);
+  max-width: 400px;
+  margin: 0 auto;
 }
 
+.exercise-not-found {
+  color: var(--error);
+  font-size: 1.1rem;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Progress Bar */
+.demo-progress {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-input);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.demo-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--primary-hover));
+  border-radius: 4px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 8px rgba(var(--primary-rgb), 0.3);
+}
+
+/* Step Counter */
+.demo-step-counter {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+/* Stick Figure */
 .stick-figure {
   overflow: visible;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.demo-head, .demo-body, .demo-arm, .demo-leg {
-  transition: all 0.3s var(--motion-ease);
+.demo-head,
+.demo-body,
+.demo-arm,
+.demo-leg {
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .demo-bg {
   opacity: 0.5;
+  transition: opacity 0.3s ease;
 }
 
 .demo-ring {
-  animation: pulse-ring 2s infinite var(--motion-ease);
+  animation: pulse-ring 3s infinite ease-in-out;
   transform-origin: center;
 }
 
 @keyframes pulse-ring {
-  0%, 100% { transform: scale(0.95); opacity: 0.3; }
-  50% { transform: scale(1.02); opacity: 0.8; }
+  0%,
+  100% {
+    transform: scale(0.95);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
 }
 
-/* Base animation duration */
-.demo-squats *, .demo-bicep-curls *, .demo-pushups *, .demo-lunges *, .demo-shoulder-press * {
+/* Step Information */
+.demo-step-info {
+  text-align: center;
+  padding: 1rem;
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.demo-step-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.demo-step-description {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Controls */
+.demo-controls {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.demo-control-btn {
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border);
+  min-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.demo-control-btn:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+}
+
+.demo-control-btn:active {
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .exercise-demo {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+
+  .demo-controls {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .demo-control-btn {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .stick-figure {
+    width: 100px !important;
+    height: 100px !important;
+  }
+}
+
+/* Animation States */
+.exercise-demo.playing .stick-figure {
+  animation: breathing 2s infinite ease-in-out;
+}
+
+@keyframes breathing {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+/* Legacy support for old keyframe animations */
+.demo-squats *,
+.demo-bicep-curls *,
+.demo-pushups *,
+.demo-lunges * {
   animation-duration: 2.5s;
-  animation-timing-function: var(--motion-ease);
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   animation-iteration-count: infinite;
 }
 
-/* Squats */
+/* Keep old animations as fallback */
 @keyframes squat-body {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(18px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(18px);
+  }
 }
 @keyframes squat-leg-l {
-  0%, 100% { transform: rotate(0deg) scaleY(1); }
-  50% { transform: rotate(-35deg) scaleY(0.5); }
+  0%,
+  100% {
+    transform: rotate(0deg) scaleY(1);
+  }
+  50% {
+    transform: rotate(-35deg) scaleY(0.5);
+  }
 }
 @keyframes squat-leg-r {
-  0%, 100% { transform: rotate(0deg) scaleY(1); }
-  50% { transform: rotate(35deg) scaleY(0.5); }
+  0%,
+  100% {
+    transform: rotate(0deg) scaleY(1);
+  }
+  50% {
+    transform: rotate(35deg) scaleY(0.5);
+  }
 }
-.demo-squats .demo-head, .demo-squats .demo-body, .demo-squats .demo-arm { animation-name: squat-body; }
-.demo-squats .demo-leg-l { animation-name: squat-leg-l; transform-origin: 50px 55px; }
-.demo-squats .demo-leg-r { animation-name: squat-leg-r; transform-origin: 50px 55px; }
+.demo-squats .demo-head,
+.demo-squats .demo-body,
+.demo-squats .demo-arm {
+  animation-name: squat-body;
+}
+.demo-squats .demo-leg-l {
+  animation-name: squat-leg-l;
+  transform-origin: 50px 55px;
+}
+.demo-squats .demo-leg-r {
+  animation-name: squat-leg-r;
+  transform-origin: 50px 55px;
+}
 
-/* Bicep Curls */
 @keyframes curl-arm-l {
-  0%, 100% { transform: rotate(15deg); }
-  50% { transform: rotate(-110deg); }
+  0%,
+  100% {
+    transform: rotate(15deg);
+  }
+  50% {
+    transform: rotate(-110deg);
+  }
 }
 @keyframes curl-arm-r {
-  0%, 100% { transform: rotate(-15deg); }
-  50% { transform: rotate(110deg); }
+  0%,
+  100% {
+    transform: rotate(-15deg);
+  }
+  50% {
+    transform: rotate(110deg);
+  }
 }
-.demo-bicep-curls .demo-arm-l { animation-name: curl-arm-l; transform-origin: 50px 34px; }
-.demo-bicep-curls .demo-arm-r { animation-name: curl-arm-r; transform-origin: 50px 34px; }
+.demo-bicep-curls .demo-arm-l {
+  animation-name: curl-arm-l;
+  transform-origin: 50px 34px;
+}
+.demo-bicep-curls .demo-arm-r {
+  animation-name: curl-arm-r;
+  transform-origin: 50px 34px;
+}
 
-/* Pushups */
 @keyframes pushup-body {
-  0%, 100% { transform: translateY(0) rotate(-75deg); }
-  50% { transform: translateY(18px) rotate(-75deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(-75deg);
+  }
+  50% {
+    transform: translateY(18px) rotate(-75deg);
+  }
 }
-.demo-pushups .stick-figure { transform: translateY(20px); }
-.demo-pushups .demo-head, .demo-pushups .demo-body, .demo-pushups .demo-leg {
-  animation-name: pushup-body; transform-origin: 50px 85px;
+.demo-pushups .stick-figure {
+  transform: translateY(20px);
 }
-.demo-pushups .demo-arm-l, .demo-pushups .demo-arm-r {
-  transform: rotate(-150deg); transform-origin: 50px 34px;
+.demo-pushups .demo-head,
+.demo-pushups .demo-body,
+.demo-pushups .demo-leg {
+  animation-name: pushup-body;
+  transform-origin: 50px 85px;
+}
+.demo-pushups .demo-arm-l,
+.demo-pushups .demo-arm-r {
+  transform: rotate(-150deg);
+  transform-origin: 50px 34px;
 }
 
-/* Lunges */
 @keyframes lunge-body {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(15px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(15px);
+  }
 }
 @keyframes lunge-leg-l {
-  0%, 100% { transform: rotate(-15deg) scaleY(1); }
-  50% { transform: rotate(-45deg) scaleY(0.65); }
+  0%,
+  100% {
+    transform: rotate(-15deg) scaleY(1);
+  }
+  50% {
+    transform: rotate(-45deg) scaleY(0.65);
+  }
 }
 @keyframes lunge-leg-r {
-  0%, 100% { transform: rotate(25deg) scaleY(1); }
-  50% { transform: rotate(45deg) scaleY(0.65); }
+  0%,
+  100% {
+    transform: rotate(25deg) scaleY(1);
+  }
+  50% {
+    transform: rotate(45deg) scaleY(0.65);
+  }
 }
-.demo-lunges .demo-head, .demo-lunges .demo-body, .demo-lunges .demo-arm { animation-name: lunge-body; }
-.demo-lunges .demo-leg-l { animation-name: lunge-leg-l; transform-origin: 50px 55px; }
-.demo-lunges .demo-leg-r { animation-name: lunge-leg-r; transform-origin: 50px 55px; }
+.demo-lunges .demo-head,
+.demo-lunges .demo-body,
+.demo-lunges .demo-arm {
+  animation-name: lunge-body;
+}
+.demo-lunges .demo-leg-l {
+  animation-name: lunge-leg-l;
+  transform-origin: 50px 55px;
+}
+.demo-lunges .demo-leg-r {
+  animation-name: lunge-leg-r;
+  transform-origin: 50px 55px;
+}
 
 /* Shoulder Press */
 @keyframes press-arm-l {
-  0%, 100% { transform: translateY(0) rotate(140deg); }
-  50% { transform: translateY(-12px) rotate(175deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(140deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(175deg);
+  }
 }
 @keyframes press-arm-r {
-  0%, 100% { transform: translateY(0) rotate(-140deg); }
-  50% { transform: translateY(-12px) rotate(-175deg); }
+  0%,
+  100% {
+    transform: translateY(0) rotate(-140deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(-175deg);
+  }
 }
-.demo-shoulder-press .demo-arm-l { animation-name: press-arm-l; transform-origin: 50px 34px; }
-.demo-shoulder-press .demo-arm-r { animation-name: press-arm-r; transform-origin: 50px 34px; }
+.demo-shoulder-press .demo-arm-l {
+  animation-name: press-arm-l;
+  transform-origin: 50px 34px;
+}
+.demo-shoulder-press .demo-arm-r {
+  animation-name: press-arm-r;
+  transform-origin: 50px 34px;
+}
 
 /* Plank */
 .demo-plank .stick-figure {
-  transform: translateY(20px) rotate(-80deg); transform-origin: center;
+  transform: translateY(20px) rotate(-80deg);
+  transform-origin: center;
 }
-.demo-plank .demo-arm-l, .demo-plank .demo-arm-r {
-  transform: rotate(-100deg); transform-origin: 50px 34px;
+.demo-plank .demo-arm-l,
+.demo-plank .demo-arm-r {
+  transform: rotate(-100deg);
+  transform-origin: 50px 34px;
 }

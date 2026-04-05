@@ -1,0 +1,145 @@
+/* Exercise Demo Showcase Styles */
+
+.exercise-showcase {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: var(--font-family);
+}
+
+.showcase-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.showcase-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.showcase-header p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.exercise-selector {
+  margin-bottom: 3rem;
+}
+
+.exercise-selector h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.exercise-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.exercise-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+}
+
+.exercise-btn:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(var(--primary-rgb), 0.15);
+}
+
+.exercise-btn.active {
+  border-color: var(--primary);
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  color: white;
+  box-shadow: 0 4px 15px rgba(var(--primary-rgb), 0.3);
+}
+
+.exercise-icon {
+  font-size: 1.5rem;
+}
+
+.exercise-name {
+  flex: 1;
+}
+
+.demo-container {
+  margin-bottom: 3rem;
+}
+
+.showcase-info {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.showcase-info h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.showcase-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.showcase-info li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.showcase-info li:last-child {
+  border-bottom: none;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .exercise-showcase {
+    padding: 1rem;
+  }
+
+  .showcase-header h1 {
+    font-size: 2rem;
+  }
+
+  .exercise-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .exercise-btn {
+    padding: 0.875rem 1.25rem;
+  }
+
+  .showcase-info {
+    padding: 1.5rem;
+  }
+}

@@ -85,6 +85,25 @@
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Dark mode overrides for semantic Tailwind colors */
+    .dark .bg-surface { background-color: #0F172A !important; }
+    .dark .bg-surface-container-lowest { background-color: #1E293B !important; }
+    .dark .bg-surface-container-low { background-color: #1a2332 !important; }
+    .dark .bg-surface-container { background-color: #1E293B !important; }
+    .dark .bg-surface-container-high { background-color: #253345 !important; }
+    .dark .bg-surface-container-highest { background-color: #334155 !important; }
+    .dark .text-on-surface { color: #e2e8f0 !important; }
+    .dark .text-on-background { color: #f1f5f9 !important; }
+    .dark .text-secondary { color: #94A3B8 !important; }
+    .dark .bg-inverse-surface { background-color: #e2e8f0 !important; }
+    .dark .text-inverse-on-surface { color: #1E293B !important; }
+    .dark .border-outline-variant\/20 { border-color: rgba(71, 85, 105, 0.3) !important; }
+
+    /* Smooth theme transition */
+    body, .bg-surface, .bg-surface-container-lowest, header {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
   </style>
 </head>
 <body>

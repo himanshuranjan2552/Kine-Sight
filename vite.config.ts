@@ -8,6 +8,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'icon.svg', 'apple-touch-icon.png'],
+      workbox: {
+        maximumFileSizeToCacheInBytes: 7 * 1024 * 1024, // 7 MB — needed for MediaPipe/WebLLM chunks
+      },
       manifest: {
         name: 'Kine-Sight AI Coach',
         short_name: 'Kine-Sight',
