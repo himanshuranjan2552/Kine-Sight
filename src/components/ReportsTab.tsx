@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { storageService, WorkoutRecord, UserProfile } from "../storage/storageService";
+import { useAuth } from "../firebase/AuthContext";
 
 interface ReportsTabProps {
   onClose: () => void;
@@ -8,13 +9,15 @@ interface ReportsTabProps {
 }
 
 export function ReportsTab({ onClose, theme, onToggleTheme }: ReportsTabProps) {
+  const { isGuest } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [history, setHistory] = useState<WorkoutRecord[]>([]);
 
   useEffect(() => {
-    setProfile(storageService.getUserProfile());
-    // Sort history by date descending
-    setHistory(storageService.getWorkoutHistory().sort((a, b) => b.date - a.date));
+    storageService.getUserProfile().then(setProfile);
+    storageService.getCloudWorkoutHistory().then(hist => {
+      setHistory(hist.sort((a, b) => b.date - a.date));
+    });
   }, []);
 
   const totalReps = profile ? profile.totalCorrectReps + profile.totalIncorrectReps : 0;
@@ -33,6 +36,12 @@ export function ReportsTab({ onClose, theme, onToggleTheme }: ReportsTabProps) {
           </span>
         </div>
         <div className="flex items-center gap-3">
+          {!isGuest && (
+            <div className="flex items-center gap-1 text-[10px] font-bold text-secondary uppercase bg-surface-container py-1 px-2 rounded-lg">
+              <span className="material-symbols-outlined text-sm text-green-500">cloud_done</span>
+              Synced
+            </div>
+          )}
           <button onClick={onToggleTheme} className="text-primary hover:text-primary-hover transition-colors" title={theme === 'dark' ? 'Light mode' : 'Dark mode'}>
             <span className="material-symbols-outlined text-2xl" data-icon={theme === 'dark' ? 'light_mode' : 'dark_mode'}>
               {theme === 'dark' ? 'light_mode' : 'dark_mode'}

@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { FitnessTab } from "./components/FitnessTab";
 import { ReportsTab } from "./components/ReportsTab";
+import { LoginScreen } from "./components/LoginScreen";
+import { useAuth } from "./firebase/AuthContext";
 
 function getInitialTheme(): 'light' | 'dark' {
   const saved = localStorage.getItem('kinesight_theme');
@@ -13,6 +15,8 @@ export function App() {
   const [route, setRoute] = useState<'fitness' | 'reports'>('fitness');
   const [theme, setTheme] = useState<'light' | 'dark'>(getInitialTheme);
 
+  const { user, loading, isGuest } = useAuth();
+
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'dark') {
@@ -24,6 +28,18 @@ export function App() {
   }, [theme]);
 
   const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+
+  if (loading) {
+    return (
+      <div className="w-full min-h-screen bg-surface dark:bg-[#0F172A] flex items-center justify-center text-primary">
+        <span className="material-symbols-outlined animate-spin text-4xl">refresh</span>
+      </div>
+    );
+  }
+
+  if (!user && !isGuest) {
+    return <LoginScreen />;
+  }
 
   return (
     <div className="w-full min-h-screen bg-surface dark:bg-[#0F172A] text-on-surface dark:text-slate-100 transition-colors duration-300">

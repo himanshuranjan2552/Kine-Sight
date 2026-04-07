@@ -17,6 +17,8 @@ import DemoVideo from "./DemoVideo";
 import { llmService } from "../llm/llmEngine";
 import { storageService } from "../storage/storageService";
 import { ttsService } from "../tts/ttsService";
+import { useAuth } from "../firebase/AuthContext";
+import { authService } from "../firebase/authService";
 import dingSoundUrl from "../../sounds/freesound_community-ding-36029.mp3";
 import incorrectSoundUrl from "../../sounds/freesound_community-training-program-incorrect2-88735.mp3";
 
@@ -122,6 +124,8 @@ const MOTIVATIONAL_MESSAGES = [
 // Component
 // ---------------------------------------------------------------------------
 export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenReports?: () => void; theme?: 'light' | 'dark'; onToggleTheme?: () => void }) {
+  const { user, isGuest, setGuestMode } = useAuth();
+  
   // Exercise selection
   const [selectedExercise, setSelectedExercise] = useState<ExerciseDef | null>(
     null,
@@ -434,8 +438,9 @@ export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenRepo
               if (isCorrect) {
                  nextPerfectReps++;
                  if (nextPerfectReps >= 10) {
-                    const profile = storageService.getUserProfile();
-                    storageService.updateBestStreak(profile.bestPerfectRepStreak + 1);
+                    storageService.getUserProfile().then(profile => {
+                      storageService.updateBestStreak(profile.bestPerfectRepStreak + 1);
+                    });
                     nextPerfectReps = 0; // reset counter after claiming a streak point
                     ttsService.speak("Incredible! That is a 10-rep perfect streak.");
                  }
@@ -747,6 +752,23 @@ export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenRepo
                 {theme === 'dark' ? 'light_mode' : 'dark_mode'}
               </span>
             </button>
+            {user ? (
+              <div className="flex items-center gap-2 border-l border-outline-variant/30 pl-3 ml-1">
+                <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm tracking-tighter">
+                  {user.email?.charAt(0).toUpperCase() || 'U'}
+                </div>
+                <button onClick={() => authService.signOut()} className="text-secondary hover:text-error transition-colors transform hover:scale-110" title="Sign Out">
+                  <span className="material-symbols-outlined text-2xl">logout</span>
+                </button>
+              </div>
+            ) : isGuest && (
+              <div className="flex items-center gap-2 border-l border-outline-variant/30 pl-3 ml-1">
+                <button onClick={() => setGuestMode(false)} className="text-secondary hover:text-primary transition-colors flex bg-surface-container py-1 px-2 rounded-lg font-bold text-xs items-center gap-1 uppercase" title="Sign Up to save data">
+                  <span className="material-symbols-outlined text-sm">login</span>
+                  Create Account
+                </button>
+              </div>
+            )}
           </div>
         </header>
 
@@ -763,10 +785,16 @@ export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenRepo
               Let's calibrate your{" "}
               <span className="text-primary italic">next move.</span>
             </h1>
-            <p className="text-secondary body-md max-w-lg">
+            <p className="text-secondary body-md max-w-lg mb-4">
               I'm your KineSight AI. Tell me your constraints, and I'll generate
               a precision-engineered routine for maximum athletic output.
             </p>
+            {isGuest && (
+              <div className="bg-primary-container/20 border border-primary/30 p-3 rounded-xl flex items-center gap-3 text-sm max-w-lg">
+                <span className="material-symbols-outlined text-primary">cloud_off</span>
+                <p className="text-on-surface"><strong>Guest Mode:</strong> Your routines are saved locally. <button className="text-primary font-bold hover:underline" onClick={() => setGuestMode(false)}>Create an account</button> to sync to the cloud.</p>
+              </div>
+            )}
           </section>
 
           {/* Generated Routine Section (Bento Style) */}

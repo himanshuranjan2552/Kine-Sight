@@ -11,6 +11,7 @@
   "dependencies": {
     "@mediapipe/tasks-vision": "^0.10.19",
     "@mlc-ai/web-llm": "^0.2.82",
+    "firebase": "^12.11.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-spring": "^10.0.3",
