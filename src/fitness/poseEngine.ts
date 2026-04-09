@@ -41,6 +41,7 @@ export interface ExerciseDef {
   id: string;
   name: string;
   icon: string;
+  imagePath?: string;
   tips: string[];
   isHold?: boolean;
   analyze: (lm: NormalizedLandmark[]) => PoseAnalysis;
@@ -81,6 +82,7 @@ export const EXERCISES: ExerciseDef[] = [
     id: 'squats',
     name: 'Squats',
     icon: '🏋️',
+    imagePath: '/exercise_images/squat_image.jpg',
     tips: ['Keep back straight', 'Knees behind toes', 'Thighs parallel to ground'],
     keyLandmarks: [LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, LM.LEFT_HIP, LM.RIGHT_HIP, LM.LEFT_KNEE, LM.RIGHT_KNEE, LM.LEFT_ANKLE, LM.RIGHT_ANKLE],
     analyze(lm: NormalizedLandmark[]) {
@@ -109,6 +111,7 @@ export const EXERCISES: ExerciseDef[] = [
     id: 'bicep-curls',
     name: 'Bicep Curls',
     icon: '💪',
+    imagePath: '/exercise_images/bicep-curl_image.jpg',
     tips: ['Keep elbows close to body', 'Full range of motion', 'Control the movement'],
     keyLandmarks: [LM.LEFT_HIP, LM.RIGHT_HIP, LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, LM.LEFT_ELBOW, LM.RIGHT_ELBOW, LM.LEFT_WRIST, LM.RIGHT_WRIST],
     analyze(lm: NormalizedLandmark[]) {
@@ -135,6 +138,7 @@ export const EXERCISES: ExerciseDef[] = [
     id: 'pushups',
     name: 'Push-ups',
     icon: '🫸',
+    imagePath: '/exercise_images/pushup_image.png',
     tips: ['Keep body straight', 'Chest near ground', 'Full arm extension'],
     keyLandmarks: [LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, LM.LEFT_ELBOW, LM.RIGHT_ELBOW, LM.LEFT_WRIST, LM.RIGHT_WRIST, LM.LEFT_HIP, LM.RIGHT_HIP, LM.LEFT_ANKLE, LM.RIGHT_ANKLE],
     analyze(lm: NormalizedLandmark[]) {
@@ -161,6 +165,7 @@ export const EXERCISES: ExerciseDef[] = [
     id: 'lunges',
     name: 'Lunges',
     icon: '🦵',
+    imagePath: '/exercise_images/lunges_image.png',
     tips: ['Front knee at 90°', 'Back knee near floor', 'Keep torso upright'],
     keyLandmarks: [LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, LM.LEFT_HIP, LM.RIGHT_HIP, LM.LEFT_KNEE, LM.RIGHT_KNEE, LM.LEFT_ANKLE, LM.RIGHT_ANKLE],
     analyze(lm: NormalizedLandmark[]) {
@@ -188,6 +193,7 @@ export const EXERCISES: ExerciseDef[] = [
     id: 'shoulder-press',
     name: 'Shoulder Press',
     icon: '🙆',
+    imagePath: '/exercise_images/shoulder-press_image.jpg',
     tips: ['Press directly overhead', 'Don\'t arch back', 'Full extension at top'],
     keyLandmarks: [LM.LEFT_HIP, LM.RIGHT_HIP, LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, LM.LEFT_ELBOW, LM.RIGHT_ELBOW, LM.LEFT_WRIST, LM.RIGHT_WRIST],
     analyze(lm: NormalizedLandmark[]) {
@@ -215,6 +221,7 @@ export const EXERCISES: ExerciseDef[] = [
     id: 'plank',
     name: 'Plank',
     icon: '🧘',
+    imagePath: '/exercise_images/plank_image.jpg',
     isHold: true,
     tips: ['Keep body in straight line', 'Engage core', 'Don\'t drop hips'],
     keyLandmarks: [LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, LM.LEFT_HIP, LM.RIGHT_HIP, LM.LEFT_ANKLE, LM.RIGHT_ANKLE],

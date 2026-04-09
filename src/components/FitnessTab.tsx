@@ -825,10 +825,19 @@ export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenRepo
                   className={`group relative bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col md:flex-row h-auto md:h-48 border border-transparent hover:border-primary/20 transition-all ${poseLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                 >
                   <div className="w-full md:w-32 lg:w-48 h-48 bg-surface-container flex flex-col items-center justify-center text-4xl overflow-hidden relative shrink-0">
-                    <span className="z-10 text-6xl group-hover:scale-125 transition-transform duration-500">
-                      {ex.icon}
-                    </span>
-                    <div className="absolute inset-0 bg-gradient-to-tr from-surface-container to-surface-container-high opacity-50 z-0"></div>
+                    {ex.imagePath ? (
+                      <>
+                        <img src={ex.imagePath} alt={ex.name} className="absolute inset-0 w-full h-full object-cover z-0 group-hover:scale-110 transition-transform duration-700" />
+                        <div className="absolute inset-0 bg-black/30 z-10 transition-colors duration-500 group-hover:bg-black/20"></div>
+                      </>
+                    ) : (
+                      <>
+                        <span className="z-20 text-6xl group-hover:scale-125 transition-transform duration-500">
+                          {ex.icon}
+                        </span>
+                        <div className="absolute inset-0 bg-gradient-to-tr from-surface-container to-surface-container-high opacity-50 z-0"></div>
+                      </>
+                    )}
                   </div>
                   <div className="flex-grow p-6 flex flex-col justify-between">
                     <div>
