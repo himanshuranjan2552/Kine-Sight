@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { FitnessTab } from "./components/FitnessTab";
 import { ReportsTab } from "./components/ReportsTab";
 import { LoginScreen } from "./components/LoginScreen";
+import { LandingPage } from "./components/LandingPage";
 import { useAuth } from "./firebase/AuthContext";
 
 function getInitialTheme(): 'light' | 'dark' {
@@ -12,7 +13,7 @@ function getInitialTheme(): 'light' | 'dark' {
 }
 
 export function App() {
-  const [route, setRoute] = useState<'fitness' | 'reports'>('fitness');
+  const [route, setRoute] = useState<'landing' | 'login' | 'fitness' | 'reports'>('landing');
   const [theme, setTheme] = useState<'light' | 'dark'>(getInitialTheme);
 
   const { user, loading, isGuest } = useAuth();
@@ -29,6 +30,15 @@ export function App() {
 
   const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
 
+  // If already authenticated, skip landing and login
+  useEffect(() => {
+    if (!loading && (user || isGuest)) {
+      if (route === 'landing' || route === 'login') {
+        setRoute('fitness');
+      }
+    }
+  }, [user, isGuest, loading, route]);
+
   if (loading) {
     return (
       <div className="w-full min-h-screen bg-surface dark:bg-[#0F172A] flex items-center justify-center text-primary">
@@ -37,6 +47,17 @@ export function App() {
     );
   }
 
+  // Show landing page
+  if (route === 'landing' && !user && !isGuest) {
+    return <LandingPage onGetStarted={() => setRoute('login')} />;
+  }
+
+  // Show login page (accessed from landing page "Get Started" button)
+  if (route === 'login' && !user && !isGuest) {
+    return <LoginScreen />;
+  }
+
+  // If not authenticated at all, show login
   if (!user && !isGuest) {
     return <LoginScreen />;
   }
