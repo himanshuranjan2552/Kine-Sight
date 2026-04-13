@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from './firebaseConfig';
+import { auth, isFirebaseConfigured } from './firebaseConfig';
 import { authService } from './authService';
 
 interface AuthContextState {
@@ -31,11 +31,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsGuest(true);
     }
 
+    // If Firebase is not configured, skip auth entirely and go straight to guest mode
+    if (!isFirebaseConfigured || !auth) {
+      console.info("Firebase not configured — entering guest mode automatically.");
+      setIsGuest(true);
+      localStorage.setItem('kinesight_is_guest', 'true');
+      setLoading(false);
+      return;
+    }
+
     let unsubscribe: (() => void) | undefined;
 
     // Process potential redirect result from Google SignIn before listening to auth state
     authService.handleRedirectResult().catch(console.error).finally(() => {
-      unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      unsubscribe = onAuthStateChanged(auth!, (currentUser) => {
         setUser(currentUser);
         if (currentUser) {
           setIsGuest(false);

@@ -30,7 +30,7 @@ const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 function pruneLocalStorageHistory(history: WorkoutRecord[]) {
   const now = Date.now();
   const isGuest = localStorage.getItem('kinesight_is_guest') === 'true';
-  const isLoggedIn = !!auth.currentUser;
+  const isLoggedIn = !!auth?.currentUser;
   
   if (isGuest || !isLoggedIn) {
      return history;
@@ -51,8 +51,8 @@ export const storageService = {
   },
 
   getCloudWorkoutHistory: async (): Promise<WorkoutRecord[]> => {
-    const user = auth.currentUser;
-    if (!user) return storageService.getWorkoutHistory();
+    const user = auth?.currentUser;
+    if (!user || !db) return storageService.getWorkoutHistory();
     
     try {
       const q = query(collection(db, `users/${user.uid}/workouts`), orderBy("date", "desc"));
@@ -87,8 +87,8 @@ export const storageService = {
       await storageService.saveUserProfile(profile);
 
       // Cloud Sync
-      const user = auth.currentUser;
-      if (user) {
+      const user = auth?.currentUser;
+      if (user && db) {
         await setDoc(doc(db, `users/${user.uid}/workouts`, newRecord.id), newRecord);
       }
     } catch (err) {
@@ -97,7 +97,7 @@ export const storageService = {
   },
 
   getUserProfile: async (): Promise<UserProfile> => {
-    const user = auth.currentUser;
+    const user = auth?.currentUser;
     let localProfile: UserProfile = {
       totalWorkouts: 0,
       totalCorrectReps: 0,
@@ -110,7 +110,7 @@ export const storageService = {
       if (data) localProfile = JSON.parse(data);
     } catch { /* Ignore */ }
 
-    if (user) {
+    if (user && db) {
       try {
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if (userDoc.exists()) {
@@ -130,8 +130,8 @@ export const storageService = {
   saveUserProfile: async (profile: UserProfile) => {
     try {
       localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
-      const user = auth.currentUser;
-      if (user) {
+      const user = auth?.currentUser;
+      if (user && db) {
         await setDoc(doc(db, "users", user.uid), { profile }, { merge: true });
       }
     } catch (err) {
@@ -153,8 +153,8 @@ export const storageService = {
   },
 
   syncLocalToCloud: async () => {
-    const user = auth.currentUser;
-    if (!user) return;
+    const user = auth?.currentUser;
+    if (!user || !db) return;
     
     try {
         const localHistory = storageService.getWorkoutHistory();
@@ -163,7 +163,7 @@ export const storageService = {
         if (localHistory.length > 0) {
             const batch = writeBatch(db);
             localHistory.forEach(record => {
-                const docRef = doc(db, `users/${user.uid}/workouts`, record.id);
+                const docRef = doc(db!, `users/${user.uid}/workouts`, record.id);
                 batch.set(docRef, record);
             });
             await batch.commit();
