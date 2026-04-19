@@ -1,0 +1,811 @@
+/* ---------------------------------------------------------------------------
+ * Video Analysis — Upload, Process & Report Screens
+ * Follows existing KineSight design system
+ * --------------------------------------------------------------------------- */
+
+/* ===== Layout ===== */
+.va-root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.va-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 50;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.va-header-light {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.va-header-dark {
+  background: rgba(15, 23, 42, 0.7);
+}
+
+.va-logo {
+  font-size: 1.25rem;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: -0.05em;
+}
+
+.va-main {
+  flex: 1;
+  padding-top: 80px;
+  padding-bottom: 48px;
+}
+
+.va-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ===== Upload Phase ===== */
+.va-upload-section {
+  text-align: center;
+  padding: 32px 0;
+}
+
+.va-upload-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+
+.va-upload-subtitle {
+  font-size: 1rem;
+  opacity: 0.6;
+  max-width: 480px;
+  margin: 0 auto 40px;
+  line-height: 1.6;
+}
+
+.va-dropzone {
+  position: relative;
+  border: 2px dashed rgba(255, 85, 0, 0.3);
+  border-radius: 20px;
+  padding: 64px 32px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.va-dropzone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 85, 0, 0.03), rgba(255, 138, 80, 0.03));
+  border-radius: 18px;
+  transition: opacity 0.3s;
+}
+
+.va-dropzone:hover {
+  border-color: rgba(255, 85, 0, 0.6);
+  transform: translateY(-2px);
+}
+
+.va-dropzone:hover::before {
+  opacity: 1;
+  background: linear-gradient(135deg, rgba(255, 85, 0, 0.06), rgba(255, 138, 80, 0.06));
+}
+
+.va-dropzone.va-dropzone-active {
+  border-color: #FF5500;
+  border-style: solid;
+  background: rgba(255, 85, 0, 0.05);
+}
+
+.va-dropzone-icon {
+  font-size: 56px;
+  opacity: 0.4;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.va-dropzone-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.va-dropzone-hint {
+  font-size: 0.8rem;
+  opacity: 0.45;
+  font-weight: 500;
+}
+
+/* File selected preview */
+.va-file-preview {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  margin-top: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.va-file-preview-light {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.va-file-preview-dark {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.va-file-thumb {
+  width: 80px;
+  height: 56px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #1e293b;
+  flex-shrink: 0;
+}
+
+.va-file-info {
+  flex: 1;
+  text-align: left;
+}
+
+.va-file-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 300px;
+}
+
+.va-file-meta {
+  font-size: 0.75rem;
+  opacity: 0.5;
+  font-weight: 500;
+}
+
+.va-file-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.4;
+  transition: opacity 0.2s;
+  padding: 8px;
+}
+
+.va-file-remove:hover {
+  opacity: 1;
+  color: #EF4444;
+}
+
+/* Exercise selector */
+.va-exercise-selector {
+  margin-top: 32px;
+}
+
+.va-exercise-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.va-exercise-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.va-exercise-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.va-exercise-card-light {
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+.va-exercise-card-dark {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+.va-exercise-card:hover {
+  border-color: rgba(255, 85, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.va-exercise-card.va-exercise-selected {
+  border-color: #FF5500;
+  background: rgba(255, 85, 0, 0.08);
+}
+
+.va-exercise-card.va-exercise-selected .va-exercise-card-icon {
+  transform: scale(1.15);
+}
+
+.va-exercise-card-icon {
+  font-size: 1.4rem;
+  transition: transform 0.2s;
+}
+
+/* CTA Button */
+.va-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
+  padding: 16px 40px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #FF5500, #FF8A50);
+  color: white;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 32px rgba(255, 85, 0, 0.25);
+}
+
+.va-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(255, 85, 0, 0.35);
+}
+
+.va-cta-btn:active {
+  transform: translateY(0);
+}
+
+.va-cta-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.va-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 8px 16px;
+  color: inherit;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.va-back-btn-light {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.va-back-btn:hover {
+  border-color: #FF5500;
+  color: #FF5500;
+}
+
+/* ===== Processing Phase ===== */
+.va-processing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  gap: 24px;
+  padding: 48px 24px;
+}
+
+.va-processing-icon {
+  font-size: 64px;
+  animation: va-pulse 2s ease-in-out infinite;
+}
+
+@keyframes va-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
+.va-processing-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.va-processing-message {
+  font-size: 0.9rem;
+  opacity: 0.6;
+  font-weight: 500;
+}
+
+.va-progress-bar-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.va-progress-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.va-progress-track-light {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.va-progress-track-dark {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.va-progress-fill {
+  height: 100%;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #FF5500, #FF8A50);
+  transition: width 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.va-progress-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  animation: va-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes va-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.va-progress-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  opacity: 0.5;
+  text-align: right;
+}
+
+/* ===== Report Phase ===== */
+.va-report {
+  padding: 16px 0 64px;
+}
+
+.va-report-header {
+  margin-bottom: 32px;
+}
+
+.va-report-title {
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-bottom: 4px;
+}
+
+.va-report-subtitle {
+  font-size: 0.85rem;
+  opacity: 0.5;
+  font-weight: 500;
+}
+
+/* Stats Grid */
+.va-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+@media (min-width: 640px) {
+  .va-stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.va-stat-card {
+  position: relative;
+  padding: 20px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.va-stat-card-light {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+.va-stat-card-dark {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.va-stat-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.45;
+  margin-bottom: 8px;
+}
+
+.va-stat-value {
+  font-size: 2rem;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.va-stat-value-primary {
+  background: linear-gradient(135deg, #FF5500, #FF8A50);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.va-stat-value-green {
+  color: #22C55E;
+}
+
+.va-stat-value-red {
+  color: #EF4444;
+}
+
+.va-stat-icon {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  font-size: 56px;
+  opacity: 0.04;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Timeline Heatmap */
+.va-section {
+  margin-bottom: 32px;
+}
+
+.va-section-title {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.45;
+  margin-bottom: 12px;
+}
+
+.va-timeline-container {
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.va-timeline-container-light {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+.va-timeline-container-dark {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.va-timeline-bar {
+  display: flex;
+  height: 28px;
+  border-radius: 8px;
+  overflow: hidden;
+  gap: 1px;
+}
+
+.va-timeline-segment {
+  flex: 1;
+  transition: opacity 0.2s;
+  position: relative;
+  cursor: pointer;
+  min-width: 2px;
+}
+
+.va-timeline-segment:hover {
+  opacity: 0.8;
+}
+
+.va-timeline-segment-good {
+  background: #22C55E;
+}
+
+.va-timeline-segment-bad {
+  background: #EF4444;
+}
+
+.va-timeline-segment-unknown {
+  background: rgba(148, 163, 184, 0.3);
+}
+
+.va-timeline-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 0.7rem;
+  opacity: 0.4;
+  font-weight: 600;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.va-timeline-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.va-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.va-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* Rep Breakdown Table */
+.va-reps-table-container {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.va-reps-table-container-light {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.06);
+}
+
+.va-reps-table-container-dark {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.va-reps-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.va-reps-table th {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.4;
+  text-align: left;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.va-reps-table-light th {
+  border-bottom-color: rgba(0, 0, 0, 0.06);
+}
+
+.va-reps-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  font-weight: 500;
+}
+
+.va-reps-table-light td {
+  border-bottom-color: rgba(0, 0, 0, 0.04);
+}
+
+.va-reps-table tr:last-child td {
+  border-bottom: none;
+}
+
+.va-rep-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.va-rep-badge-good {
+  background: rgba(34, 197, 94, 0.12);
+  color: #22C55E;
+}
+
+.va-rep-badge-bad {
+  background: rgba(239, 68, 68, 0.12);
+  color: #EF4444;
+}
+
+.va-rep-issues {
+  font-size: 0.75rem;
+  opacity: 0.55;
+  font-weight: 500;
+}
+
+/* Common Issues */
+.va-issues-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.va-issue-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.va-issue-item-light {
+  background: rgba(239, 68, 68, 0.03);
+  border-color: rgba(239, 68, 68, 0.1);
+}
+
+.va-issue-item-dark {
+  background: rgba(239, 68, 68, 0.06);
+  border-color: rgba(239, 68, 68, 0.15);
+}
+
+.va-issue-icon {
+  color: #EF4444;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.va-issue-text {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.va-issue-count {
+  font-size: 0.72rem;
+  opacity: 0.5;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* No issues state */
+.va-no-issues {
+  padding: 32px;
+  text-align: center;
+  border-radius: 14px;
+  border: 1px solid rgba(34, 197, 94, 0.15);
+}
+
+.va-no-issues-light {
+  background: rgba(34, 197, 94, 0.03);
+}
+
+.va-no-issues-dark {
+  background: rgba(34, 197, 94, 0.06);
+}
+
+.va-no-issues-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.va-no-issues-text {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #22C55E;
+}
+
+/* Video Player with Skeleton */
+.va-video-player-container {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  aspect-ratio: 16/9;
+}
+
+.va-video-player-container-light {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.va-video-player {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  background: #0a0a0a;
+}
+
+.va-video-overlay-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Action buttons row */
+.va-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+/* Empty reps state */
+.va-empty-reps {
+  padding: 32px;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.5;
+  font-weight: 500;
+}
+
+/* Error state */
+.va-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.va-error-icon {
+  font-size: 48px;
+  color: #EF4444;
+}
+
+.va-error-text {
+  font-size: 1rem;
+  font-weight: 600;
+  max-width: 400px;
+  line-height: 1.5;
+}

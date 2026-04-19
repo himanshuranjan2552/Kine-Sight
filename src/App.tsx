@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FitnessTab } from "./components/FitnessTab";
 import { ReportsTab } from "./components/ReportsTab";
+import { VideoAnalysisTab } from "./components/VideoAnalysisTab";
 import { LoginScreen } from "./components/LoginScreen";
 import { LandingPage } from "./components/LandingPage";
 import { useAuth } from "./firebase/AuthContext";
@@ -13,7 +14,7 @@ function getInitialTheme(): 'light' | 'dark' {
 }
 
 export function App() {
-  const [route, setRoute] = useState<'landing' | 'login' | 'fitness' | 'reports'>('landing');
+  const [route, setRoute] = useState<'landing' | 'login' | 'fitness' | 'reports' | 'video-analysis'>('landing');
   const [theme, setTheme] = useState<'light' | 'dark'>(getInitialTheme);
 
   const { user, loading, isGuest } = useAuth();
@@ -64,8 +65,9 @@ export function App() {
 
   return (
     <div className="w-full min-h-screen bg-surface dark:bg-[#0F172A] text-on-surface dark:text-slate-100 transition-colors duration-300">
-      {route === 'fitness' && <FitnessTab onOpenReports={() => setRoute('reports')} theme={theme} onToggleTheme={toggleTheme} />}
+      {route === 'fitness' && <FitnessTab onOpenReports={() => setRoute('reports')} onOpenVideoAnalysis={() => setRoute('video-analysis')} theme={theme} onToggleTheme={toggleTheme} />}
       {route === 'reports' && <ReportsTab onClose={() => setRoute('fitness')} theme={theme} onToggleTheme={toggleTheme} />}
+      {route === 'video-analysis' && <VideoAnalysisTab onClose={() => setRoute('fitness')} theme={theme} onToggleTheme={toggleTheme} />}
     </div>
   );
 }

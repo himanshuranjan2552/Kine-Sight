@@ -123,7 +123,7 @@ const MOTIVATIONAL_MESSAGES = [
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
-export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenReports?: () => void; theme?: 'light' | 'dark'; onToggleTheme?: () => void }) {
+export function FitnessTab({ onOpenReports, onOpenVideoAnalysis, theme, onToggleTheme }: { onOpenReports?: () => void; onOpenVideoAnalysis?: () => void; theme?: 'light' | 'dark'; onToggleTheme?: () => void }) {
   const { user, isGuest, setGuestMode } = useAuth();
   
   // Exercise selection
@@ -863,6 +863,38 @@ export function FitnessTab({ onOpenReports, theme, onToggleTheme }: { onOpenRepo
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Upload Video Card */}
+            <div
+              onClick={() => onOpenVideoAnalysis?.()}
+              className="group relative bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col md:flex-row h-auto md:h-48 border border-dashed border-primary/30 hover:border-primary/60 transition-all cursor-pointer"
+            >
+              <div className="w-full md:w-32 lg:w-48 h-48 bg-gradient-to-br from-primary/10 to-primary-container/10 flex flex-col items-center justify-center text-4xl overflow-hidden relative shrink-0">
+                <span className="material-symbols-outlined text-primary text-5xl group-hover:scale-110 transition-transform duration-500 z-20">
+                  upload_file
+                </span>
+              </div>
+              <div className="flex-grow p-6 flex flex-col justify-between">
+                <div>
+                  <div className="flex justify-between items-start mb-2">
+                    <h4 className="text-xl font-extrabold uppercase tracking-tight">
+                      Upload Video
+                    </h4>
+                    <span className="text-primary font-bold text-sm whitespace-nowrap ml-2">
+                      AI Analysis
+                    </span>
+                  </div>
+                  <p className="text-secondary text-sm my-2 line-clamp-2">
+                    Upload a recorded workout video and get a detailed posture analysis, rep count, and form feedback.
+                  </p>
+                </div>
+                <div className="flex gap-4 mt-2">
+                  <button className="bg-gradient-to-r from-primary to-primary-container text-white px-6 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-md group-hover:shadow-lg transition-all active:scale-95">
+                    Analyze Video
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Sidebar: Performance Insights */}
