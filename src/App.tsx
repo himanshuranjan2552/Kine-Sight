@@ -30,10 +30,10 @@ export function App() {
 
   const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
 
-  // If already authenticated, skip landing and login
+  // If already authenticated, skip login (but not landing — landing should always show first)
   useEffect(() => {
     if (!loading && (user || isGuest)) {
-      if (route === 'landing' || route === 'login') {
+      if (route === 'login') {
         setRoute('fitness');
       }
     }
@@ -48,7 +48,7 @@ export function App() {
   }
 
   // Show landing page
-  if (route === 'landing' && !user && !isGuest) {
+  if (route === 'landing') {
     return <LandingPage onGetStarted={() => setRoute('login')} />;
   }
 

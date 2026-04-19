@@ -138,7 +138,7 @@ export const EXERCISES: ExerciseDef[] = [
     id: 'pushups',
     name: 'Push-ups',
     icon: '🫸',
-    imagePath: '/exercise_images/pushup_image.png',
+    imagePath: '/exercise_images/push-ups_image.jpg',
     tips: ['Keep body straight', 'Chest near ground', 'Full arm extension'],
     keyLandmarks: [LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, LM.LEFT_ELBOW, LM.RIGHT_ELBOW, LM.LEFT_WRIST, LM.RIGHT_WRIST, LM.LEFT_HIP, LM.RIGHT_HIP, LM.LEFT_ANKLE, LM.RIGHT_ANKLE],
     analyze(lm: NormalizedLandmark[]) {
