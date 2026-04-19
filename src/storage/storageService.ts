@@ -31,11 +31,11 @@ function pruneLocalStorageHistory(history: WorkoutRecord[]) {
   const now = Date.now();
   const isGuest = localStorage.getItem('kinesight_is_guest') === 'true';
   const isLoggedIn = !!auth?.currentUser;
-  
+
   if (isGuest || !isLoggedIn) {
-     return history;
+    return history;
   }
-  
+
   return history.filter(record => (now - record.date) <= THREE_DAYS_MS);
 }
 
@@ -53,7 +53,7 @@ export const storageService = {
   getCloudWorkoutHistory: async (): Promise<WorkoutRecord[]> => {
     const user = auth?.currentUser;
     if (!user || !db) return storageService.getWorkoutHistory();
-    
+
     try {
       const q = query(collection(db, `users/${user.uid}/workouts`), orderBy("date", "desc"));
       const snapshot = await getDocs(q);
@@ -73,7 +73,7 @@ export const storageService = {
         ...record,
         id: crypto.randomUUID()
       };
-      
+
       // Save locally
       history.push(newRecord);
       const prunedHistory = pruneLocalStorageHistory(history);
@@ -155,30 +155,30 @@ export const storageService = {
   syncLocalToCloud: async () => {
     const user = auth?.currentUser;
     if (!user || !db) return;
-    
+
     try {
-        const localHistory = storageService.getWorkoutHistory();
-        const localProfile = JSON.parse(localStorage.getItem(PROFILE_KEY) || "null");
+      const localHistory = storageService.getWorkoutHistory();
+      const localProfile = JSON.parse(localStorage.getItem(PROFILE_KEY) || "null");
 
-        if (localHistory.length > 0) {
-            const batch = writeBatch(db);
-            localHistory.forEach(record => {
-                const docRef = doc(db!, `users/${user.uid}/workouts`, record.id);
-                batch.set(docRef, record);
-            });
-            await batch.commit();
-        }
+      if (localHistory.length > 0) {
+        const batch = writeBatch(db);
+        localHistory.forEach(record => {
+          const docRef = doc(db!, `users/${user.uid}/workouts`, record.id);
+          batch.set(docRef, record);
+        });
+        await batch.commit();
+      }
 
-        if (localProfile) {
-            await setDoc(doc(db, "users", user.uid), { profile: localProfile }, { merge: true });
-        }
-        
-        // After syncing, prune local storage to 3 days
-        const pruned = pruneLocalStorageHistory(localHistory);
-        localStorage.setItem(HISTORY_KEY, JSON.stringify(pruned));
+      if (localProfile) {
+        await setDoc(doc(db, "users", user.uid), { profile: localProfile }, { merge: true });
+      }
+
+      // After syncing, prune local storage to 3 days
+      const pruned = pruneLocalStorageHistory(localHistory);
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(pruned));
 
     } catch (err) {
-        console.warn("Failed to sync local data to cloud", err);
+      console.warn("Failed to sync local data to cloud", err);
     }
   }
 };

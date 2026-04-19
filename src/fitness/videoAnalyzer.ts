@@ -218,7 +218,9 @@ export async function analyzeVideo(
       let frameData: FrameAnalysis;
 
       try {
-        const results = landmarker.detect(canvas);
+        // @ts-ignore - The `detect` method is missing from MediaPipe's TS definitions 
+        // for PoseLandmarker in some versions, but it exists at runtime.
+        const results = (landmarker as any).detect(canvas);
 
         if (results.landmarks && results.landmarks.length > 0) {
           const landmarks = results.landmarks[0];
@@ -232,7 +234,7 @@ export async function analyzeVideo(
             form: analysis.form,
             formDetails: analysis.formDetails || [],
             angle: analysis.angle,
-            landmarks: landmarks.map(lm => ({ ...lm })),
+            landmarks: landmarks.map((lm: NormalizedLandmark) => ({ ...lm })),
             confident: analysis.confident,
           };
         } else {
