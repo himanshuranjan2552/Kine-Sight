@@ -48,10 +48,21 @@ export interface ExerciseDef {
   keyLandmarks: number[];
 }
 
-const MIN_VISIBILITY = 0.5;
+export const MIN_VISIBILITY = 0.5;
 
 export function areLandmarksVisible(lm: NormalizedLandmark[], indices: number[]): boolean {
   return indices.every(i => lm[i] && (lm[i].visibility ?? 0) >= MIN_VISIBILITY);
+}
+
+/**
+ * Looser visibility check for video analysis — uses lower threshold (0.3)
+ * because video from different camera angles will have partially occluded landmarks.
+ */
+export function areLandmarksVisibleLoose(lm: NormalizedLandmark[], indices: number[]): boolean {
+  const LOOSE_VISIBILITY = 0.3;
+  // At least 60% of the required landmarks should be visible
+  const visibleCount = indices.filter(i => lm[i] && (lm[i].visibility ?? 0) >= LOOSE_VISIBILITY).length;
+  return visibleCount >= Math.ceil(indices.length * 0.6);
 }
 
 export function calcAngle(a: NormalizedLandmark, b: NormalizedLandmark, c: NormalizedLandmark): number {
@@ -62,7 +73,7 @@ export function calcAngle(a: NormalizedLandmark, b: NormalizedLandmark, c: Norma
   return angle;
 }
 
-function avgSideAngle(
+export function avgSideAngle(
   lm: NormalizedLandmark[],
   leftA: number, leftB: number, leftC: number,
   rightA: number, rightB: number, rightC: number,
@@ -70,6 +81,27 @@ function avgSideAngle(
   const leftAngle = calcAngle(lm[leftA], lm[leftB], lm[leftC]);
   const rightAngle = calcAngle(lm[rightA], lm[rightB], lm[rightC]);
   return (leftAngle + rightAngle) / 2;
+}
+
+/**
+ * Pick the angle from the side with better landmark visibility.
+ * For side-camera videos, one side's landmarks overlap/are occluded,
+ * producing wildly wrong angles. This uses the more visible side.
+ */
+export function bestSideAngle(
+  lm: NormalizedLandmark[],
+  leftA: number, leftB: number, leftC: number,
+  rightA: number, rightB: number, rightC: number,
+): number {
+  const leftVis = ((lm[leftA]?.visibility ?? 0) + (lm[leftB]?.visibility ?? 0) + (lm[leftC]?.visibility ?? 0)) / 3;
+  const rightVis = ((lm[rightA]?.visibility ?? 0) + (lm[rightB]?.visibility ?? 0) + (lm[rightC]?.visibility ?? 0)) / 3;
+  const leftAngle = calcAngle(lm[leftA], lm[leftB], lm[leftC]);
+  const rightAngle = calcAngle(lm[rightA], lm[rightB], lm[rightC]);
+  
+  // If both sides are well-visible, average them
+  if (leftVis > 0.5 && rightVis > 0.5) return (leftAngle + rightAngle) / 2;
+  // Otherwise pick the more visible side
+  return leftVis > rightVis ? leftAngle : rightAngle;
 }
 
 function checkForm(...conditions: [boolean, string][]): { form: FormQuality, details: string[] } {

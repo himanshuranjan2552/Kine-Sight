@@ -863,9 +863,8 @@ export function FitnessTab({ onOpenReports, onOpenVideoAnalysis, theme, onToggle
                   </div>
                 </div>
               ))}
-            </div>
 
-            {/* Upload Video Card */}
+              {/* Upload Video Card */}
             <div
               onClick={() => onOpenVideoAnalysis?.()}
               className="group relative bg-surface-container-lowest rounded-xl overflow-hidden flex flex-col md:flex-row h-auto md:h-48 border border-dashed border-primary/30 hover:border-primary/60 transition-all cursor-pointer"
@@ -895,6 +894,7 @@ export function FitnessTab({ onOpenReports, onOpenVideoAnalysis, theme, onToggle
                   </button>
                 </div>
               </div>
+            </div>
             </div>
 
             {/* Sidebar: Performance Insights */}

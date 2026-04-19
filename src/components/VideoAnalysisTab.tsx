@@ -137,12 +137,32 @@ export function VideoAnalysisTab({ onClose, theme = 'dark', onToggleTheme }: Vid
     if (!ctx) return;
 
     const draw = () => {
-      if (video.paused && rafRef.current) {
-        // Still draw one frame when paused
-      }
+      const containerW = video.clientWidth;
+      const containerH = video.clientHeight;
+      canvas.width = containerW;
+      canvas.height = containerH;
 
-      canvas.width = video.clientWidth;
-      canvas.height = video.clientHeight;
+      // Compute the actual rendered video rect within the container
+      // (accounting for object-fit: contain letterboxing)
+      const videoW = report.videoDimensions.width || video.videoWidth || 640;
+      const videoH = report.videoDimensions.height || video.videoHeight || 480;
+      const videoAspect = videoW / videoH;
+      const containerAspect = containerW / containerH;
+
+      let renderW: number, renderH: number, offsetX: number, offsetY: number;
+      if (videoAspect > containerAspect) {
+        // Video is wider — pillarbox (bars top+bottom)
+        renderW = containerW;
+        renderH = containerW / videoAspect;
+        offsetX = 0;
+        offsetY = (containerH - renderH) / 2;
+      } else {
+        // Video is taller — letterbox (bars left+right)
+        renderH = containerH;
+        renderW = containerH * videoAspect;
+        offsetX = (containerW - renderW) / 2;
+        offsetY = 0;
+      }
 
       // Find the closest frame to the current playback time
       const currentTime = video.currentTime;
@@ -164,9 +184,17 @@ export function VideoAnalysisTab({ onClose, theme = 'dark', onToggleTheme }: Vid
             ? '#EF4444'
             : '#F59E0B';
 
+        // Remap landmarks from normalized (0-1) to the actual rendered rect
+        const mappedLandmarks = closestFrame.landmarks.map(lm => ({
+          ...lm,
+          // Transform: normalized coord → pixel in rendered video area → pixel in canvas
+          x: (lm.x * renderW + offsetX) / containerW,
+          y: (lm.y * renderH + offsetY) / containerH,
+        }));
+
         drawSkeleton(
           ctx,
-          closestFrame.landmarks,
+          mappedLandmarks,
           canvas.width,
           canvas.height,
           formColor,
